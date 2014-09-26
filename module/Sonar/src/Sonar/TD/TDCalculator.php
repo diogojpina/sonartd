@@ -2,20 +2,20 @@
 
 namespace Sonar\TD;
 
-use Sonar\Model\Issue;
+use Sonar\Entity\Issue;
 
 class TDCalculator {
 	private $work_hours = 8;
 	
 	public function calc(Issue $issue) {
-		$key = $issue->rule->plugin_rule_key;
+		$key = $issue->getRule()->getPluginRuleKey();
 		$className = '\Sonar\TD\\' . $key;
 		if (class_exists($className)) {
 			$obj = new $className($issue);
-			return $obj->getTD();			
+			return $obj->getTechnicalDebt();
 		}
 		else {
-			return $issue->technical_debt;
+			return $issue->getTechnicalDebt();
 		}
 	}
 	

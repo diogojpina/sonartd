@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Sonar\Model\Project;
 use Sonar\Model\ProjectDao;
+use Sonar\Model\ProjectModel;
 use Sonar\Model\Issue;
 use Sonar\Model\IssueDao;
 use Sonar\TD\TDCalculator;
@@ -13,61 +14,41 @@ use Sonar\TD\TDCalculator;
 class SonarController extends AbstractActionController {
 	
 	public function indexAction() {
-		$projectDao = new ProjectDao ( $this->getServiceLocator () );
-		$projects = $projectDao->fetchAll ();
+		$objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
 		
-		$project = $projectDao->get ( 1 );
-		print_r ( $project );
-		echo '<hr />';
+		$repository = $objectManager->getRepository('Sonar\Entity\Project');
+		$projects = $repository->findAll();
+		
 		foreach ( $projects as $project ) {
 			print_r ( $project );
 			echo '<br />';
 		}
 		return new ViewModel ();
 	}
-
+    
     public function listAction() {
-    	/*
-    	$project = new Project();
-    	$project->id = 29;
-    	
-        $issueDao = new IssueDao($this->getServiceLocator());
-        
-        $issues = $issueDao->getIssuebyProject($project);
-        
-        foreach ($issues as $issue) {
-        	$tdCalculator = new TDCalculator();
-        	$td = $tdCalculator->calc($issue);
-        	echo $td;
-        	echo '<br><br>';
-        }
-        */
-    	$projectDao = new ProjectDao($this->getServiceLocator());
-    	$issueDao = new IssueDao($this->getServiceLocator());
+    	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdCalculator = new TDCalculator();
     	
-    	$projects = $projectDao->getRoots();    	
+    	$projects = $projectModel->getRoots();
     	foreach ($projects as $project) {
-    		$files = $projectDao->getSourceFiles($project);
+    		$files = $projectModel->getSourceFiles($project);
     		foreach ($files as $file) {
-    			echo "<h3>$file->name</h3><br />";
-    			$issues = $issueDao->getIssuebyProject($file);
+    			echo "<h3>" . $file->getName() . "</h3><br />";
+    			
     			$sum = 0;
-    			foreach ($issues as $issue) {
+    			foreach ($file->getIssues() as $issue) {
     				$td = $tdCalculator->calc($issue);
-    				//print_r($issue);
     				echo $tdCalculator->format($td);
     				echo "<br />";
-    				$sum += $td;    				    				
+    				$sum += $td;    				
     			}
     			echo "Soma: " . $tdCalculator->format($sum);
     			echo '<hr />';
     		}
     	}
     	
-    	
-    	
-    	return new ViewModel();
+    	return false;
     }
 
 

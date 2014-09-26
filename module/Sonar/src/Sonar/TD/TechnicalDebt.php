@@ -2,12 +2,12 @@
 
 namespace Sonar\TD;
 
-use Sonar\Model\Issue;
+use Sonar\Entity\Issue;
 
-abstract class TD {
+abstract class TechnicalDebt {
 	protected $issue;
 	
-	abstract public function getTD();
+	abstract public function getTechnicalDebt();
 		
 	public function __construct(Issue $issue) {
 		$this->issue = $issue;

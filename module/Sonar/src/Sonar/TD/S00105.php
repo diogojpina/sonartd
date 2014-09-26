@@ -2,9 +2,9 @@
 
 namespace Sonar\TD;
 
-class S00105 extends TD {
+class S00105 extends TechnicalDebt {
 	
-	public function getTD() {
+	public function getTechnicalDebt() {
 		return 2;
 	}
 	
