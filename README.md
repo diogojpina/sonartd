@@ -12,4 +12,7 @@ Reinicie o Apache.
 Configurando o Banco de Dados
 Altere o arquivo: config/autoload/doctrine.global.php
 
+Crie uma pasta:
+data/DoctrineORMModule/Proxy
 
+Defina permissão de escrita para o apache.

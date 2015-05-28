@@ -1,0 +1,28 @@
+<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#pay<?=$issue->getId()?>Modal">
+Pay Information
+</button>
+<?php if ($issue->getTechnicalDebt()->getRealTD()):?>
+[<?=$issue->getTechnicalDebt()->getRealTD()?> min]
+<?php endif;?>
+
+
+<!-- Technical Debt Payment Modal -->
+<div class="modal fade" id="pay<?=$issue->getId()?>Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Pay Information</h4>
+      </div>
+      <div class="modal-body">
+      	Time to fix:
+        <input type="number" id="pay<?=$issue->getId()?>" value="<?=$issue->getTechnicalDebt()->getRealTD()?>" /> minute(s)
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="<?=$issue->getId()?>" name="btnPay<?=$issue->getId()?>">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+

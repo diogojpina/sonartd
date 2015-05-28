@@ -14,8 +14,7 @@ class Rule {
 	protected $id;
 	
 	/** @ORM\Column(type="string", name="plugin_rule_key") */
-	protected $pluginRuleKey;
-	
+	protected $pluginRuleKey;	
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="Sonar\Entity\Issue", mappedBy="rule")

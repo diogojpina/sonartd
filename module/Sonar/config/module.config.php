@@ -26,10 +26,27 @@ return array (
 				) 
 		),
 		
+		'console' => array(
+				'router' => array(
+						'routes' => array(
+								'calcTD' => array(
+										'type'    => 'simple',
+										'options' => array(
+												'route'    => 'calc TD',
+												'defaults' => array(
+														'controller' => 'Sonar\Controller\Sonar',
+														'action'     => 'calc'
+												)
+										)
+								)
+						)
+				)
+		),
+		
 		'view_manager' => array (
 				'template_path_stack' => array (
 						'sonar' => __DIR__ . '/../view' 
-				) 
+				)
 		),
 		'doctrine' => array (
 				'driver' => array (

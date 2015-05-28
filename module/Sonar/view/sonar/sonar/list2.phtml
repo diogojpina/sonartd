@@ -1,0 +1,186 @@
+
+<?php if ($this->project == null):?>
+	<?php foreach ($this->projects as $prj): ?>
+		<a href="?project=<?=$prj->getId()?>"/><?=$prj->getName()?></a>
+	<?php endforeach;?>
+<?php else: ?>
+	Projeto:
+	<b><?=$this->project->getName()?></b>
+	<?=$this->tdHelper->getTechnicalDebtProjectFormated($this->project)?>
+	<br /><br />
+	<div class="row">
+  	<div class="col-md-6" style="height: 200px; overflow:auto">  	
+	<?php foreach ($this->dirs as $directory):?>
+	<?php if ($directory->getId() == $dir->getId()) echo '->'; ?>
+	<a href="?project=<?=$this->project->getId()?>&dir=<?=$directory->getId()?>"><?=$directory->getName()?></a>
+	<?=$this->tdHelper->getTechnicalDebtDirFormated($directory)?>
+	<br />
+	<?php endforeach;?>
+	</div>
+
+	<div class="col-md-6" style="height: 200px; overflow:auto">
+	<?php foreach ($this->files as $fil):?>
+		<?php if ($fil->getId() == $file->getId()) echo '->'; ?>
+		<a href="?project=<?=$this->project->getId()?>&dir=<?=$dir->getId()?>&file=<?=$fil->getId()?>"/><?=$fil->getName()?></a>
+		<?=$this->tdHelper->getTechnicalDebtFileFormated($fil)?>
+		<br />
+	<?php endforeach;?>
+	</div>
+	</div>	
+<?php endif;?>
+
+<?php if ($this->file->getId()):?>
+<h2>File: <?=$file->getName()?></h2>
+*<?=$file->getLongName()?> 
+<br /><br />
+<?php else: return; endif;?>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Painel Resumo</div>
+  <div class="panel-body">
+    Colocar o resumo das informações aqui
+    
+  </div>
+</div>
+
+<!-- List Issues -->
+<?php if ($this->file):
+foreach ($this->file->getIssues() as $issue):?>
+<div class="alert alert-info" role="alert">
+<h4>
+<span class="label label-<?=$issue->getSeverityTag()?>"><?=$issue->getSeverity()?></span>
+<?=$issue->getTechnicalDebt()->getTechnicalDebtFormated()?> -
+<?=$issue->getRule()->getId()?>
+</h4>
+<?=$issue->getMessage()?> <br />
+
+<?php echo $this->partial("sonar/sonar/statusModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/assignToModal.phtml", array('issue' => $issue, 'users' => $users));?>
+
+<?php echo $this->partial("sonar/sonar/planModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/payModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/severityModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/commentModal.phtml", array('issue' => $issue));?>
+</div>
+
+
+<?php if ($issue->getLine()):?>
+	<?php //echo $file->getSnapshot()->getSource()->printData($issue->getLine(), 10)?>
+<?php endif;?>
+<br />
+
+
+<?php endforeach; endif;?>
+<!-- List Issues -->
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("[name*=btnComment]").click(function(){
+		id = $(this).attr('id');
+		comment = $('#comment' + id).val();
+
+		$.post("<?=$this->basepath()?>/sonar/comment", {
+			id: id,
+			comment: comment
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});
+    });
+
+    $("[name*=btnAssignTo]").click(function(){
+		id = $(this).attr('id');
+		assignTo = $('#assignTo' + id).val();
+
+		if (assignTo != 0) {	
+			$.post("<?=$this->basepath()?>/sonar/assignTD", {
+				id: id,
+				login: assignTo
+			},
+			function(data, status){
+				if (data == '') {
+					location.reload();
+				}
+				else {
+					alert('Error: ' + data);
+				}				
+			});				
+		}
+		else {
+			alert('Select one developer.');
+		}
+    });  
+
+    $("[name*=btnPay]").click(function(){
+		id = $(this).attr('id');
+		realTD = $('#pay' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/payTD", {
+			id: id,
+			realTD: realTD
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });    
+
+
+    $("[name*=btnSeverity]").click(function(){
+		id = $(this).attr('id');
+		severity = $('#severity' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/changeSeverity", {
+			id: id,
+			severity: severity
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });   
+
+    $("[name*=btnStatus]").click(function(){
+		id = $(this).attr('id');
+		status = $('#status' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/changeStatus", {
+			id: id,
+			status: status
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });   
+
+});
+
+</script>
+
+
+
+
+

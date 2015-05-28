@@ -30,20 +30,35 @@ class Issue {
 	/** @ORM\Column(length=3) */
 	protected $severity;
 	
+	/** @ORM\Column(name="manual_severity", type="integer") */
+	protected $manualSeverity;
+	
 	/** @ORM\Column(type="integer") */
 	protected $line;
 	
-	/** @ORM\Column(length=11) */
+	/** @ORM\Column(length=20) */
 	protected $status;
+	
+	/** @ORM\Column(length=20) */
+	protected $resolution;
 	
 	/** @ORM\Column(type="string") */
 	protected $message;
 	
+	/** @ORM\Column(type="string") */
+	protected $assignee;
+	
 	/** @ORM\Column(length=20) */
 	protected  $effort_to_fix;
 	
+	/** @ORM\OneToOne(targetEntity="Sonar\Entity\TechnicalDebt", mappedBy="issue") */
+	protected $technicalDebt;
+	
 	/** @ORM\Column(type="integer", name="technical_debt") */
-	protected  $technicalDebt;
+	protected $td;
+	
+	/** @ORM\Column(type="string") */
+	protected $component_uuid;
 		
 	
 	public function getId() {
@@ -58,7 +73,7 @@ class Issue {
 		return $this->project;
 	}
 	
-	public function setProject(Project $Project) {
+	public function setProject(Project $project) {
 		$this->project = $project;
 	}	
 	
@@ -76,6 +91,38 @@ class Issue {
 	
 	public function setSeverity($severity) {
 		$this->severity = $severity;
+	}
+	
+	public function getSeverityTag() {
+		switch ($this->severity) {			
+			case 'CRITICAL':
+				return 'danger';
+			case 'MAJOR':
+				return 'warning';				
+			case 'MINOR':
+				return 'primary';
+				break;
+			case 'INFO':
+				return 'info';
+			default:
+				return 'default';
+		}
+	}
+	
+	public function getManualSeverity() {
+		return $this->manualSeverity;
+	}
+	
+	public function setManualSeverity($manualSeverity) {
+		$this->manualSeverity = $manualSeverity;
+	}
+	
+	public function getResolution() {
+		return $this->resolution;
+	}
+	
+	public function setResolution($resolution) {
+		$this->resolution = $resolution;
 	}
 	
 	public function getLine() {
@@ -102,6 +149,14 @@ class Issue {
 		$this->message = $message;
 	}	
 	
+	public function getAssignee() {
+		return $this->assignee;
+	}
+	
+	public function setAssignee($assignee) {
+		$this->assignee = $assignee;
+	}	
+	
 	public function getTechnicalDebt() {
 		return $this->technicalDebt;
 	}
@@ -110,6 +165,17 @@ class Issue {
 		$this->technicalDebt = $technicalDebt;
 	}
 	
+	public function getTD() {
+		return $this->td;
+	}
+	
+	public function setTD($td) {
+		$this->td = $td;
+	}
+	
+	public function getComponentUUID() {
+		return $this->component_uuid;
+	}
 }
 
 ?>

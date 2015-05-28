@@ -3,20 +3,45 @@
 namespace Sonar\TD;
 
 use Sonar\Entity\Issue;
+use Sonar\Entity\TechnicalDebt;
+use Sonar\Model\TechnicalDebtRegression;
 
 class TDCalculator {
 	private $work_hours = 8;
 	
+	
 	public function calc(Issue $issue) {
+		
+		if ($issue->getTechnicalDebt()) {
+			$technicalDebt = $issue->getTechnicalDebt();
+		} 
+		else {
+			$technicalDebt = new TechnicalDebt();
+			$technicalDebt->setIssue($issue);
+		}
+		
+		
 		$key = $issue->getRule()->getPluginRuleKey();
 		$className = '\Sonar\TD\\' . $key;
 		if (class_exists($className)) {
 			$obj = new $className($issue);
-			return $obj->getTechnicalDebt();
+			$technicalDebt->setModelTD($obj->getTechnicalDebt());
 		}
 		else {
-			return $issue->getTechnicalDebt();
+			$technicalDebt->setModelTD(0);
 		}
+		
+		$technicalDebtRegression = new TechnicalDebtRegression();
+		$technicalDebtRegression->calc($issue);
+		
+		$technicalDebt->setRegressionTD(0);	
+		if (!$technicalDebt->getRealTD()) {
+			$technicalDebt->setRealTD(0);
+		}
+		
+		$technicalDebt->setSonarTD($issue->getTD());
+		
+		return $technicalDebt;
 	}
 	
 	public function format($td) {
@@ -51,8 +76,7 @@ class TDCalculator {
 			$time .= "$min mins ";
 		}
 		
-		return trim($time);		
-		
+		return trim($time);				
 	}
 }
 

@@ -1,0 +1,32 @@
+<?php 
+$severitys = array('Blocker', 'Critical', 'Major', 'Minor', 'Info');
+?>
+<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#severity<?=$issue->getId()?>Modal">
+Change Severity
+</button>
+
+<!-- Change Severity Modal -->
+<div class="modal fade" id="severity<?=$issue->getId()?>Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Change Severity</h4>
+      </div>
+      <div class="modal-body">
+        <select id="severity<?=$issue->getId()?>">
+        	<?php foreach ($severitys as $severity):?>
+        	<option value="<?php echo strtoupper($severity);?>" 
+        	<?php if (strtoupper($severity) == $issue->getSeverity()) echo 'selected="selected"';?>>
+        		<?php echo $severity;?>
+        	</option>
+        	<?php endforeach;?>        	
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="<?=$issue->getId()?>" name="btnSeverity<?=$issue->getId()?>">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

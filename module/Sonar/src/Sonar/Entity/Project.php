@@ -22,6 +22,9 @@ class Project {
     /** @ORM\Column(type="string") */
     protected $name;
     
+    /** @ORM\Column(type="string", name="long_name") */
+    protected $longName;
+    
     /** @ORM\Column(length=3) */
     protected $scope;
     
@@ -35,6 +38,14 @@ class Project {
      * @ORM\OneToMany(targetEntity="Sonar\Entity\Issue", mappedBy="project")
      **/
     private $issues;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Sonar\Entity\Snapshot", mappedBy="project")
+     **/
+    private $snapshots;    
+    
+    /** @ORM\Column(type="string") */
+    protected $uuid;
 
 	public function getId() {
 		return $this->id;
@@ -59,6 +70,19 @@ class Project {
 	public function setName($name) {
 		$this->name = $name;
 	}	
+	
+	public function getLongName() {
+		return $this->longName;
+	}
+	
+	public function setLongName($longName) {
+		$this->longName = $longName;
+	}
+	
+	public function getDirName() {
+		$len = strlen($this->longName) - strlen($this->name) - 1;
+		return substr($this->longName, 0, $len);
+	}
 	
 	public function getScope() {
 		return $this->scope;
@@ -91,6 +115,21 @@ class Project {
 	public function setIssues($issues) {
 		$this->issues = $issues;
 	}	
+	
+	public function getSnapshots() {
+		return $this->snapshots;
+	}
+	
+	public function setSnapshots($snapshots) {
+		$this->snapshots = $snapshots;
+	} 
+	
+	public function getSnapshot() {
+		foreach ($this->snapshots as $snapshot) {
+			
+		}
+		return $snapshot;				
+	}
 }
 
 ?>

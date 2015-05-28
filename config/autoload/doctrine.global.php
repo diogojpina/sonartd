@@ -9,7 +9,7 @@ return array (
 										'port' => '3306',
 										'user' => 'root',
 										'password' => 'toor',
-										'dbname' => 'sonar2' 
+										'dbname' => 'sonar51' 
 								) 
 						)
 				)

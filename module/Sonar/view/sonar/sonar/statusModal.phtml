@@ -1,0 +1,49 @@
+<?php 
+if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'REOPENED' || $issue->getStatus() == 'CONFIRMED') {
+	$status = array();
+	if ($issue->getStatus() == 'CONFIRMED') {
+		$status['unconfirm'] = 'Unconfirmed';
+	}
+	else {
+		$status['confirm'] = 'Confirmed';
+	}
+	$status['fix'] = 'Resolve as Fixed';
+	$status['false_positive'] = 'Resolve as False Positive';
+	$status['fix_not'] = "Resolve as won't fix";
+	
+	$statusMessage = $issue->getStatus();
+}
+else {
+	$status = array('reopen' => 'Reopen');
+	$statusMessage = $issue->getResolution();
+}
+
+
+?>
+<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#status<?=$issue->getId()?>Modal">
+Change Status	
+</button>
+[<?=$statusMessage?>]
+
+<!-- Status Modal -->
+<div class="modal fade" id="status<?=$issue->getId()?>Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Change Status</h4>
+      </div>
+      <div class="modal-body">
+        <select id="status<?=$issue->getId()?>">
+      	<?php foreach ($status as $key => $stat):?>
+      		<option value="<?php echo $key;?>"><?php echo $stat?></option>
+      	<?php endforeach;?>        
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="<?=$issue->getId()?>" name="btnStatus<?=$issue->getId()?>">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
