@@ -15,6 +15,7 @@ use Sonar\Entity\Issue;
 use Sonar\Model\IssueModel;
 use Sonar\Entity\TechnicalDebtMeasure;
 use Sonar\Model\TechnicalDebtMeasureModel;
+use Sonar\Model\CharacteristicModel;
 
 class SonarController extends AbstractActionController {
 	
@@ -274,6 +275,34 @@ class SonarController extends AbstractActionController {
     	 
     	return $this->response;    	
     }
+    
+    public function characteristicAction() {
+    	$characteristicModel = new CharacteristicModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
+    	$characteristics = $characteristicModel->getRoots();
+    	
+    	foreach ($characteristics as $characteristic) {
+    		echo $characteristic->getName();
+    		echo '<br />';
+    		
+    		foreach ($characteristic->getSubCharacteristics() as $subcharacteristic) {
+    			echo '-> ' . $subcharacteristic->getName();
+    			echo '<br />';
+    			
+    			foreach ($subcharacteristic->getRules() as $rule) {
+    				echo '-> -> ' . $rule->getName();
+    				echo '<br />';
+    			}
+    		}
+    		echo '<hr />';
+    	}
+    	
+    	
+    	
+    	
+    	return false;
+    }
+    
 
 
 }

@@ -3,6 +3,7 @@
 namespace Sonar\Model;
 
 use Sonar\Entity\TechnicalDebt;
+use Sonar\Entity\Rule;
 
 class TechnicalDebtModel {
 	private $sm;
@@ -18,6 +19,10 @@ class TechnicalDebtModel {
 			$this->sm->persist($technicalDebt);
 		}
 		$this->sm->flush();
+	}
+	
+	public function getByRule(Rule $rule) {
+		
 	}
 }
 

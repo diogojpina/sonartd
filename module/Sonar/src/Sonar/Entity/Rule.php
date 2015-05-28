@@ -21,6 +21,15 @@ class Rule {
 	 **/
 	private $issues;
 	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Characteristic", inversedBy="rules")
+	 * @ORM\JoinColumn(name="default_characteristic_id", referencedColumnName="id")
+	 **/
+	protected $characteristic;
+	
+	/** @ORM\Column(type="string") */
+	protected $name;
+	
 	public function getId() {
 		return $this->id;
 	}
@@ -44,6 +53,14 @@ class Rule {
 	public function setIssues($issues) {
 		$this->issues = $issues;
 	}	
+	
+	public function getName() {
+		return $this->name;
+	}
+	
+	public function setName($name) {
+		$this->name = $name;
+	}
 	
 	
 	
