@@ -305,8 +305,9 @@ class SonarController extends AbstractActionController {
     }
     
     public function categorizationAction() {
-    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$characteristicModel = new CharacteristicModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
     	
     	$characteristics = $characteristicModel->getRoots();
     	
@@ -318,6 +319,20 @@ class SonarController extends AbstractActionController {
     		echo "TD = $td min";
     		echo '<hr />';
     	}
+    	
+    	return false;
+    }
+    
+    public function sqaleRateAction() {
+    	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
+    	$file_id = 589;
+    	$file = $projectModel->get($file_id);
+    	    	
+    	$rate = $tdModel->getFileRate($file);
+    	
+    	print_r($rate);
     	
     	return false;
     }

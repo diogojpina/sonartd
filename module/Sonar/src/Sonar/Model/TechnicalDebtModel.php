@@ -6,6 +6,8 @@ use Sonar\Entity\TechnicalDebt;
 use Sonar\Entity\Rule;
 use Sonar\Entity\Characteristic;
 use Sonar\Entity\Issue;
+use Sonar\Entity\Project;
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 
 class TechnicalDebtModel {
 	private $sm;
@@ -54,6 +56,80 @@ class TechnicalDebtModel {
 		if ($td)
 			return $td->getTechnicalDebt();
 	}
+	
+	public function getByFile(Project $file) {
+		$sum = 0;
+		foreach ($file->getIssues() as $issue) {
+			$sum += $this->getByIssue($issue);
+		}
+		return $sum;
+	}
+	
+	
+	public function getFileRate(Project $file) {
+		$td = $this->getByFile($file);
+		
+		$costLine = 0.48;
+		$nlines = 200;
+		
+		$density = $this->getDensity($td, $costLine, $nlines);
+		
+		$rate = $this->getRate($density);
+		
+		$effortToImproveRate = $this->getEffortToImproveRate($density, $td, $costLine, $nlines);
+		
+		
+		$obj = new \stdClass();
+		$obj->density = $density;
+		$obj->rate = $rate;
+		$obj->efforToImproveRate = $effortToImproveRate;
+		
+		return $obj;
+	}
+	
+	private function getDensity($td, $costLine, $nlines) {
+		return $td / ($costLine * $nlines);
+	}
+	
+	private function getImproveDensity($density, $td, $costLine, $nLines) {
+		$tdm = $density * $costLine * $nLines;
+		return $td - $tdm;
+	}
+	
+	private function getRate($density) {
+		if ($density <= 0.1)
+			return 'A';
+		else if ($density > 0.1 && $density <= 0.2)
+			return 'B';
+		else if ($density > 0.2 && $density <= 0.5)
+			return 'C';					
+		else if ($density > 0.5 && $density <= 1)
+			return 'D';
+		else
+			return 'E';
+	}
+	
+	
+	private function getEffortToImproveRate($density, $td, $costLine, $nLines) {		
+		$effort = array();
+		if ($density > 0.1)
+			$effort['A'] = $this->getImproveDensity(0.1, $td, $costLine, $nLines);
+		
+		if ($density > 0.2)
+			$effort['B'] = $this->getImproveDensity(0.2, $td, $costLine, $nLines);					
+		
+		if ($density > 0.5)
+			$effort['C'] = $this->getImproveDensity(0.5, $td, $costLine, $nLines);
+		
+		if ($density > 1) 
+			$effort['D'] = $this->getImproveDensity(1, $td, $costLine, $nLines);
+
+
+		return $effort;
+	}
+	
+	
+	
 }
 
 ?>
