@@ -16,6 +16,7 @@ use Sonar\Model\IssueModel;
 use Sonar\Entity\TechnicalDebtMeasure;
 use Sonar\Model\TechnicalDebtMeasureModel;
 use Sonar\Model\CharacteristicModel;
+use DoctrineORMModule\Proxy\__CG__\Sonar\Entity\Rule;
 
 class SonarController extends AbstractActionController {
 	
@@ -303,6 +304,23 @@ class SonarController extends AbstractActionController {
     	return false;
     }
     
+    public function categorizationAction() {
+    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$characteristicModel = new CharacteristicModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
+    	$characteristics = $characteristicModel->getRoots();
+    	
+    	foreach ($characteristics as $characteristic) {
+    		echo $characteristic->getName();
+    		echo '<br />';
+    		
+    		$td = $tdModel->getByCharacteristic($characteristic);
+    		echo "TD = $td min";
+    		echo '<hr />';
+    	}
+    	
+    	return false;
+    }
 
 
 }

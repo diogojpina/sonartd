@@ -22,9 +22,7 @@ class CharacteristicModel {
 		return $this->repository->findBy(array('parent' => null));
 	}
 	
-	public function getSubCharacteristics(Characteristic $characteristic) {
-		
-	}
+
 }
 
 ?>
