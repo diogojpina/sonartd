@@ -59,6 +59,9 @@ class Issue {
 	
 	/** @ORM\Column(type="string") */
 	protected $component_uuid;
+	
+	/** @ORM\Column(type="string") */
+	protected $project_uuid;
 		
 	
 	public function getId() {

@@ -138,8 +138,26 @@ class SonarController extends AbstractActionController {
     	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdCalculator = new TDCalculator();
     	
-    	$issueModel->updateComponentId();
     	
+    	
+    	$project_id = 587;
+    	$project = $projectModel->get($project_id);
+    	$files = $projectModel->getSourceFiles($project);    	
+    	foreach ($files as $file) {
+    		foreach ($file->getIssues() as $issue) {
+    			$technicalDebt = $tdCalculator->calc($issue);
+    			
+    			
+    			//$technicalDebtModel->save($technicalDebt);
+    		}
+    	}
+    	
+    	
+    	return false;
+    	
+    	//FIX
+    	$issueModel->updateComponentId();   	
+    	    	    	
     	$projects = $projectModel->getRoots();    	
     	foreach ($projects as $project) {
     		$files = $projectModel->getSourceFiles($project);

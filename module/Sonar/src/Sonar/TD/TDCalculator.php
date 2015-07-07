@@ -13,7 +13,7 @@ class TDCalculator {
 	public function calc(Issue $issue) {
 		
 		if ($issue->getTechnicalDebt()) {
-			$technicalDebt = $issue->getTechnicalDebt();
+			$technicalDebt = $issue->getTechnicalDebt();			
 		} 
 		else {
 			$technicalDebt = new TechnicalDebt();
@@ -21,7 +21,28 @@ class TDCalculator {
 		}
 		
 		
+		$technicalDebt->setSonarTD($issue->getTD());
+		
+		$this->calcByModelClass($technicalDebt);
+		
+		//calculate using regression
+		$technicalDebtRegression = new TechnicalDebtRegression();
+		$technicalDebtRegression->calc($technicalDebt);
+		
+		$technicalDebt->setRegressionTD(0);	
+		if (!$technicalDebt->getRealTD()) {
+			$technicalDebt->setRealTD(0);
+		}
+		
+		
+		
+		return $technicalDebt;
+	}
+	
+	private function calcByModelClass(TechnicalDebt $technicalDebt) {
+		$issue = $technicalDebt->getIssue();				
 		$key = $issue->getRule()->getPluginRuleKey();
+		
 		$className = '\Sonar\TD\\' . $key;
 		if (class_exists($className)) {
 			$obj = new $className($issue);
@@ -31,17 +52,6 @@ class TDCalculator {
 			$technicalDebt->setModelTD(0);
 		}
 		
-		$technicalDebtRegression = new TechnicalDebtRegression();
-		$technicalDebtRegression->calc($issue);
-		
-		$technicalDebt->setRegressionTD(0);	
-		if (!$technicalDebt->getRealTD()) {
-			$technicalDebt->setRealTD(0);
-		}
-		
-		$technicalDebt->setSonarTD($issue->getTD());
-		
-		return $technicalDebt;
 	}
 	
 	public function format($td) {

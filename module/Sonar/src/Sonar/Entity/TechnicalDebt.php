@@ -48,7 +48,7 @@ class TechnicalDebt {
 	}
 	
 	public function getIssue() {
-		return $this->getIssue();
+		return $this->issue;
 	}
 	
 	public function setIssue($issue) {

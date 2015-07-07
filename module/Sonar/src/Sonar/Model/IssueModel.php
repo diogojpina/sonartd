@@ -3,6 +3,7 @@
 namespace Sonar\Model;
 
 use Sonar\Entity\Issue;
+use Sonar\Entity\Project;
 
 class IssueModel {
 	private $sm;
@@ -30,7 +31,26 @@ class IssueModel {
 		$projectModel = new ProjectModel($this->sm);
 		$issues = $this->repository->findAll();
 		
+		$strQuery = "update Sonar\Entity\Issue i 
+					INNER JOIN Sonar\Entity\Project p on p.uuid = i.component_uuid
+					set i.component_id = p.id
+					where i.component_id is null";
+		
+		/*
+		$strQuery = "select i from Sonar\Entity\Issue i
+					inner join Sonar\Entity\Project p
+					where 1 = 1";
+		*/
+		
+		$query = $this->sm->createQuery($strQuery);
+		//$query->getResult();
+		$query->execute();
+		
+		return false;
+		$i = 0;
+		$n = count($issues);
 		foreach ($issues as $issue) {
+			echo ++$i . '/' . $n . "\n";
 			if ($issue->getProject()) {
 				continue;
 			}
