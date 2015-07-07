@@ -1,0 +1,91 @@
+<link rel="stylesheet" type="text/css" href="<?=$this->basepath()?>/js/jit/css/BarPyramidChart.css">
+
+<script type="text/javascript" src="<?=$this->basepath()?>/js/jit/jit-yc.js"></script>
+
+<script type="text/javascript">
+var labelType, useGradients, nativeTextSupport, animate;
+
+(function() {
+  var ua = navigator.userAgent,
+      iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+      typeOfCanvas = typeof HTMLCanvasElement,
+      nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
+      textSupport = nativeCanvasSupport 
+        && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+  //I'm setting this based on the fact that ExCanvas provides text support for IE
+  //and that as of today iPhone/iPad current text support is lame
+  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+  nativeTextSupport = labelType == 'Native';
+  useGradients = nativeCanvasSupport;
+  animate = !(iStuff || !nativeCanvasSupport);
+})();
+
+
+
+
+function init(){
+
+	$.ajaxSetup({
+		async: false
+		});
+
+	$.getJSON("<?=$this->basepath()?>/sonar/pyramidJson?project=587", function( data ) {
+		  json = data;		  
+
+		})
+		  .fail(function() {
+ 		    console.log( "error" );
+  		});
+
+
+    //init BarChart
+    var barChart = new $jit.BarChart({
+      injectInto: 'infovis',
+      animate: true,
+      orientation: 'horizontal',
+      barsOffset: 15,
+      Margin: {
+        top: 5,
+        left: 5,
+        right: 5,
+        bottom: 5
+      },
+      labelOffset:5,
+      type:'stacked',
+      showAggregates:false,
+      showLabels:true,
+      //label styles
+      Label: {
+        type: labelType, //Native or HTML
+        size: 13,
+        family: 'Arial',
+        color: 'white'
+      },
+      //tooltip options
+      Tips: {
+        enable: false,
+        onShow: function(tip, elem) {
+          tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value;
+        }
+      }
+    });
+    //load JSON data.
+    barChart.loadJSON(json);
+
+}
+
+window.onload = init;
+
+</script>
+
+
+
+
+<div id="center-container">
+    <div id="infovis"></div>    
+</div>
+
+<div id="pyramid">
+
+</div>
+

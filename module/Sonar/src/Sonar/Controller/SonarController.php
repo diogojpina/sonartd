@@ -17,6 +17,7 @@ use Sonar\Entity\TechnicalDebtMeasure;
 use Sonar\Model\TechnicalDebtMeasureModel;
 use Sonar\Model\CharacteristicModel;
 use DoctrineORMModule\Proxy\__CG__\Sonar\Entity\Rule;
+use Zend\View\Model\JsonModel;
 
 class SonarController extends AbstractActionController {
 	
@@ -320,6 +321,28 @@ class SonarController extends AbstractActionController {
     	
     	
     	return false;
+    }
+    
+    public function pyramidAction() {
+    	
+    }
+    
+    public function pyramidJsonAction() {
+    	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
+    	$id = isset($_GET['project'])?$_GET['project']:0;
+
+    	$project = $projectModel->get($id);
+    	
+    	$data = $tdModel->getByRisk($project);
+    	
+    	$data['label'] = array('Acumulado', 'TD');
+    	
+    	    	
+    	
+    	
+    	return new JsonModel($data);
     }
     
     public function categorizationAction() {

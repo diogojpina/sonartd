@@ -99,6 +99,7 @@ class Issue {
 	public function getSeverityTag() {
 		switch ($this->severity) {			
 			case 'CRITICAL':
+			case 'BLOCKER':
 				return 'danger';
 			case 'MAJOR':
 				return 'warning';				

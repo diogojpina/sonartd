@@ -25,6 +25,47 @@ class TechnicalDebtModel {
 		$this->sm->flush();
 	}
 	
+	public function getByProject(Project $project) {
+		$projectModel = new ProjectModel($this->sm);
+		
+		$tds = array();
+		
+		$files = $projectModel->getSourceFiles($project);
+		foreach ($files as $file) {
+			$issues = $file->getIssues();
+			foreach ($issues as $issue) {
+				$tds[] = $issue->getTechnicalDebt();
+			}			
+		}
+		
+		return $tds;		
+	}
+	
+	public function getByRisk(Project $project) {
+		$tds = $this->getByProject($project);
+		
+		$categories = array('INFO', 'MINOR', 'MAJOR', 'CRITICAL', 'BLOCKER');
+		foreach ($categories as $categorie) {
+			$data[$categorie] = 0; 
+		}
+		
+		$total = 0;
+		
+		foreach ($tds as $td) {
+			$data[$td->getIssue()->getSeverity()] += $td->getTechnicalDebt();
+			$total += $td->getTechnicalDebt();			
+		}
+		
+		$accumulated = 0;
+		foreach ($categories as $categorie) {
+			$percent = $data[$categorie] * 100 / $total;
+			$data['values'][] = array('label' => $categorie, 'values' => array($accumulated, $percent));			
+			$accumulated += $percent;
+		}		
+		
+		return $data;
+	}
+	
 	public function getByCharacteristic(Characteristic $characteristic) {
 		$sum = 0;
 		foreach ($characteristic->getSubCharacteristics() as $subCharacteristic) {
