@@ -378,6 +378,8 @@ class SonarController extends AbstractActionController {
     	return false;
     }
 
-
+    public function sunburstAction() {
+    
+    }
 }
 
