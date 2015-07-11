@@ -9,3 +9,4 @@ nbproject
 composer.lock
 vendor/bin
 vendor/*
+doctrine.global.php
