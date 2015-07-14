@@ -57,10 +57,12 @@ class TechnicalDebtModel {
 		}
 		
 		$accumulated = 0;
+		$accumulatedTotal = 0;
 		foreach ($categories as $categorie) {
+			$accumulatedTotal += $data[$categorie];
 			$percent = $data[$categorie] * 100 / $total;
-			$data['values'][] = array('label' => $categorie, 'values' => array($accumulated, $percent));			
-			$accumulated += $percent;
+			$data['values'][] = array('label' => $categorie, 'values' => array($accumulated, $percent, $data[$categorie], $accumulatedTotal));			
+			$accumulated += $percent;			
 		}		
 		
 		return $data;

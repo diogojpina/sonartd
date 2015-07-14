@@ -323,6 +323,21 @@ class SonarController extends AbstractActionController {
     	return false;
     }
     
+    public function pyramidh5Action() {
+    	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$tdModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	 
+    	$id = isset($_GET['project'])?$_GET['project']:0;
+    	
+    	$project = $projectModel->get($id);
+    	 
+    	$data = $tdModel->getByRisk($project);
+    	 
+    	$data['label'] = array('Acumulado', 'TD');
+    	
+    	return $data;
+    }
+    
     public function pyramidAction() {
     	
     }
@@ -339,11 +354,10 @@ class SonarController extends AbstractActionController {
     	
     	$data['label'] = array('Acumulado', 'TD');
     	
-    	    	
-    	
-    	
     	return new JsonModel($data);
     }
+    
+    
     
     public function categorizationAction() {
     	$characteristicModel = new CharacteristicModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
@@ -380,6 +394,14 @@ class SonarController extends AbstractActionController {
 
     public function sunburstAction() {
     
+    }
+    
+    public function areachartAction() {
+    
+    }
+    
+    public function timelineAction() {
+    	
     }
 }
 

@@ -1,0 +1,27 @@
+<div style="width: 45%;">
+<div class="row">
+<div class="col-md-10"><b>Piramide TD por risco</b></div>
+<div class="col-md-1"><b>TD</b></div>
+<div class="col-md-1"><b>Total</b></div>
+</div>
+<?php foreach ($this->values as $value): ?>
+<div class="row">
+<div class="col-md-3">
+<?php echo $value['label'];?>
+</div>
+<div class="col-md-7">
+<div class="progress" style="width: <?php echo $value['values'][0] + $value['values'][1];?>%">
+  <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $value['values'][0];?>"
+  aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $value['values'][0];?>%">
+  </div>
+</div>
+</div>
+<div class="col-md-1">
+<?php echo $value['values'][2];?>
+</div>
+<div class="col-md-1">
+<?php echo $value['values'][3];?>
+</div>
+</div>
+<?php endforeach;?>
+</div>
