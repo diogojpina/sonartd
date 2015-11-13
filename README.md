@@ -7,7 +7,7 @@ Habilite o virtual server:
 sudo a2ensite <nome do vhost>
 
 Reinicie o Apache.
-
+sudo service apache2 restart
 
 Configurando o Banco de Dados
 Altere o arquivo: config/autoload/doctrine.global.php
