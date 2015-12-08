@@ -50,7 +50,9 @@ foreach ($this->file->getIssues() as $issue):?>
 <h4>
 <span class="label label-<?=$issue->getSeverityTag()?>"><?=$issue->getSeverity()?></span>
 <?=$issue->getTechnicalDebt()->getTechnicalDebtFormated()?> -
-<?=$issue->getRule()->getId()?>
+<?=$issue->getRule()->getId()?> -  
+<?=$issue->getId()?>
+<?//=$issue->getProject()->getUUId()?> - 
 </h4>
 <?=$issue->getMessage()?> <br />
 
@@ -70,6 +72,16 @@ foreach ($this->file->getIssues() as $issue):?>
 
 <?php if ($issue->getLine()):?>
 	<?php //echo $file->getSnapshot()->getSource()->printData($issue->getLine(), 10)?>
+	<div id="code-<?=$issue->getId()?>"></div>
+	<input type="button" id="btnCode-<?=$issue->getId()?>" value="Mostrar Código"> <br />
+<script type="text/javascript">
+$( "#btnCode-<?=$issue->getId()?>" ).click(function() {
+$.ajax({url: "/sonar/showCode?id=<?=$issue->getId()?>", success: function(result){
+    $("#code-<?=$issue->getId()?>").html(result);
+    $("#btnCode-<?=$issue->getId()?>").hide();
+}});
+});
+</script>
 <?php endif;?>
 <br />
 

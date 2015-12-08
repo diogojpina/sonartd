@@ -64,10 +64,10 @@ class Project extends \Sonar\Entity\Project implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'scope', 'qualifier', 'enabled', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', 'uuid');
+            return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', 'uuid');
         }
 
-        return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'scope', 'qualifier', 'enabled', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', 'uuid');
+        return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', 'uuid');
     }
 
     /**
@@ -395,6 +395,28 @@ class Project extends \Sonar\Entity\Project implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getSnapshot', array());
 
         return parent::getSnapshot();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUUId()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getUUId', array());
+
+        return parent::getUUId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getKee()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getKee', array());
+
+        return parent::getKee();
     }
 
 }

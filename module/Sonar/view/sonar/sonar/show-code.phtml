@@ -1,0 +1,13 @@
+<?php 
+$top = ceil($quantity / 4);
+$ini = max($line - $top, 1);
+$max = min($line+$quantity-$top, count($lines));
+		
+for ($i=$ini; $i < $max; $i++) {
+	if ($i+1 == $line) echo '<b>';
+?>
+	<?=$i+1?>: <?=$lines[$i]?><br />
+<?php
+	if ($i+1 == $line) echo '</b>';
+}
+?>

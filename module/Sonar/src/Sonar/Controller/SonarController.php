@@ -77,8 +77,7 @@ class SonarController extends AbstractActionController {
     	if ($project_id) {
     		$project = $projectModel->get($project_id); 
     	}
-    	
-    	
+    	   	
     	
     	$files = null;
     	$dirs = array();
@@ -131,6 +130,38 @@ class SonarController extends AbstractActionController {
     	
     	return $data;
     	
+    }
+    
+    public function issuesAction() {
+    	
+    }
+    
+    public function showCodeAction() {
+    	$issueId = $_GET['id'];
+    	
+    	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$issue = $issueModel->get($issueId);  
+
+    	if ($issue->getLine() == 0) {
+    		$output = '';
+    	} else {
+    		$kee = $issue->getProject()->getKee();
+    		$url = "http://localhost:9051/api/sources/raw?key=$kee";
+    		$ch = curl_init();
+    		curl_setopt($ch, CURLOPT_URL, $url);
+    		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    		curl_setopt($ch, CURLOPT_USERPWD, "admin:admin");
+    		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    		$output = curl_exec($ch);
+    		$info = curl_getinfo($ch);
+    		curl_close($ch);
+    	}
+    	
+    	$lines = explode("\n", $output);
+    	
+    	$viewModel = new ViewModel();
+    	$viewModel->setVariables(array('lines' => $lines, 'line' => $issue->getLine(), 'quantity' => 10))->setTerminal(true);
+    	return $viewModel;
     }
     
     public function calcAction() {

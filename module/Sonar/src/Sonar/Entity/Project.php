@@ -25,6 +25,9 @@ class Project {
     /** @ORM\Column(type="string", name="long_name") */
     protected $longName;
     
+    /** @ORM\Column(type="string") */
+    protected $kee;
+    
     /** @ORM\Column(length=3) */
     protected $scope;
     
@@ -129,6 +132,14 @@ class Project {
 			
 		}
 		return $snapshot;				
+	}
+	
+	public function getUUId() {
+		return $this->uuid;
+	}
+	
+	public function getKee() {
+		return $this->kee;
 	}
 }
 
