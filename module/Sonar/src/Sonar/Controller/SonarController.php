@@ -133,7 +133,26 @@ class SonarController extends AbstractActionController {
     }
     
     public function issuesAction() {
+    	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$userModel = new UserModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	    	
+    	$projectId = isset($_GET['project'])?$_GET['project']:0;
+    	$project = $projectModel->get($projectId);
+    	if (!$project) {
+    		return false;
+    	}
+        	
+    	$severities = isset($_GET['severity'])?$_GET['severity']:array();
+    	$resolutions = isset($_GET['resolution'])?$_GET['resolution']:array();
     	
+    	$filters = array('severities' => $severities, 'resolutions' => $resolutions);
+    	
+    	$issues = $issueModel->find($project, $filters);
+    	
+    	$users = $userModel->findAll();
+    	
+    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'filters' => $filters);    	
     }
     
     public function showCodeAction() {

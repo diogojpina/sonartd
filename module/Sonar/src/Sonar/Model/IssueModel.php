@@ -20,6 +20,55 @@ class IssueModel {
 		return $this->sm->find('Sonar\Entity\Issue', $id);
 	}
 	
+	public function find(Project $project, $filters) {		
+		$where = '';	
+		if ($filters['severities']) {			
+			$where .= ' and (';			
+			$i = 1;
+			foreach ($filters['severities'] as $severity) {				
+				$where .= " i.severity = '$severity' ";	
+				if ($i < count($filters['severities'])) {
+					$where .= ' or ';
+				}	
+				$i++;		
+			}
+			$where .= ')';
+		}
+				
+		if ($filters['resolutions']) {
+			$where .= ' and (';
+			$i = 1;
+			foreach ($filters['resolutions'] as $resolution) {
+				if ($resolution == 'UNRESOLVED') {
+					$where .= " i.resolution is null ";
+				}
+				else {
+					$where .= " i.resolution = '$resolution' ";
+				}				
+				if ($i < count($filters['resolutions'])) {
+					$where .= ' or ';
+				}
+				$i++;
+			}
+			$where .= ')';			
+		}
+		else {
+			$where .= ' and i.resolution is null';
+		}
+				
+		$qb = $this->sm->createQueryBuilder();
+		$qb	->select('i')
+   			->from('Sonar\Entity\Issue', 'i')
+   			->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
+   			->where('p.uuid = ?1 ' . $where	)
+   			->orderBy('i.id', 'ASC')
+			->setParameter(1, $project->getUUId());
+		
+		$query = $qb->getQuery();		
+		$results = $query->getResult();		
+		return $results;
+	}
+	
 	public function save(Issue $issue) {
 		if (!$issue->getId()) {
 			$this->sm->persist($issue);

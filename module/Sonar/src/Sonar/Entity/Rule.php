@@ -30,6 +30,9 @@ class Rule {
 	/** @ORM\Column(type="string") */
 	protected $name;
 	
+	/** @ORM\Column(type="string") */
+	protected $description;
+	
 	public function getId() {
 		return $this->id;
 	}
@@ -60,6 +63,10 @@ class Rule {
 	
 	public function setName($name) {
 		$this->name = $name;
+	}
+	
+	public function getDescription() {
+		return $this->description;
 	}
 	
 	

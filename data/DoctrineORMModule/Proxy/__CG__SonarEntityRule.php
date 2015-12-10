@@ -64,10 +64,10 @@ class Rule extends \Sonar\Entity\Rule implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', 'pluginRuleKey', '' . "\0" . 'Sonar\\Entity\\Rule' . "\0" . 'issues', 'characteristic', 'name');
+            return array('__isInitialized__', 'id', 'pluginRuleKey', '' . "\0" . 'Sonar\\Entity\\Rule' . "\0" . 'issues', 'characteristic', 'name', 'description');
         }
 
-        return array('__isInitialized__', 'id', 'pluginRuleKey', '' . "\0" . 'Sonar\\Entity\\Rule' . "\0" . 'issues', 'characteristic', 'name');
+        return array('__isInitialized__', 'id', 'pluginRuleKey', '' . "\0" . 'Sonar\\Entity\\Rule' . "\0" . 'issues', 'characteristic', 'name', 'description');
     }
 
     /**
@@ -263,6 +263,17 @@ class Rule extends \Sonar\Entity\Rule implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', array($name));
 
         return parent::setName($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDescription()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getDescription', array());
+
+        return parent::getDescription();
     }
 
 }

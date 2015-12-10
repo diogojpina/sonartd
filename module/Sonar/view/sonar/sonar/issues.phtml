@@ -1,0 +1,165 @@
+<div class="row">
+  <div class="col-md-3">
+  	<h3>Filters</h3>
+  	<form method="get">
+  	<input type="hidden" name="project" value="<?=$project->getId()?>">
+  	
+  	Severity:<br />
+  	<input type="checkbox" name="severity[]" value="BLOCKER" <?php if (in_array('BLOCKER', $filters['severities'])) echo 'checked="checked"';?>> Blocker
+  	<input type="checkbox" name="severity[]" value="CRITICAL" <?php if (in_array('CRITICAL', $filters['severities'])) echo 'checked="checked"';?>> Critical
+  	<br />
+  	<input type="checkbox" name="severity[]" value="MAJOR" <?php if (in_array('MAJOR', $filters['severities'])) echo 'checked="checked"';?>> Major
+  	<input type="checkbox" name="severity[]" value="MINOR" <?php if (in_array('MINOR', $filters['severities'])) echo 'checked="checked"';?>> Minor
+  	<input type="checkbox" name="severity[]" value="INFO" <?php if (in_array('INFO', $filters['severities'])) echo 'checked="checked"';?>> Info
+  	<br />
+  	
+  	Resolution:<br />
+  	<input type="checkbox" name="resolution[]" value="UNRESOLVED" <?php if (in_array('UNRESOLVED', $filters['resolutions']) || !$filters['resolutions']) echo 'checked="checked"';?>> Unresolved 
+  	<input type="checkbox" name="resolution[]" value="FALSE-POSITIVE" <?php if (in_array('FALSE-POSITIVE', $filters['resolutions'])) echo 'checked="checked"';?>> False Positive
+  	<br />
+  	<input type="checkbox" name="resolution[]" value="REMOVED" <?php if (in_array('REMOVED', $filters['resolutions'])) echo 'checked="checked"';?>> Removed
+  	<input type="checkbox" name="resolution[]" value="FIXED" <?php if (in_array('FIXED', $filters['resolutions'])) echo 'checked="checked"';?>> Fixed    
+  	<input type="checkbox" name="resolution[]" value="WONTFIX" <?php if (in_array('WONTFIX', $filters['resolutions'])) echo 'checked="checked"';?>> Won't Fix
+  	<br />
+  	
+  	<br />
+  	<input type="submit" value="Filter" />
+  	</form>
+  </div>
+  <div class="col-md-9">
+  	<h3>Issues</h3>
+  	
+<!-- List Issues -->
+
+<?php foreach ($issues as $issue):?>
+<div class="alert alert-info" role="alert">
+<h4>
+<span class="label label-<?=$issue->getSeverityTag()?>"><?=$issue->getSeverity()?></span>
+<?=$issue->getTechnicalDebt()->getTechnicalDebtFormated()?> -
+<?=$issue->getRule()->getId()?>  -
+<?=$issue->getId()?> 
+</h4>
+<?=$issue->getMessage()?> <br />
+<?php echo $this->partial("sonar/sonar/statusModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/assignToModal.phtml", array('issue' => $issue, 'users' => $users));?>
+
+<?php echo $this->partial("sonar/sonar/planModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/payModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/severityModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/commentModal.phtml", array('issue' => $issue));?>
+
+<?php echo $this->partial("sonar/sonar/moreInfoModal.phtml", array('issue' => $issue));?>
+</div>
+
+<?php endforeach;?>
+<!-- List Issues -->  	
+
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("[name*=btnComment]").click(function(){
+		id = $(this).attr('id');
+		comment = $('#comment' + id).val();
+
+		$.post("<?=$this->basepath()?>/sonar/comment", {
+			id: id,
+			comment: comment
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});
+    });
+
+    $("[name*=btnAssignTo]").click(function(){
+		id = $(this).attr('id');
+		assignTo = $('#assignTo' + id).val();
+
+		if (assignTo != 0) {	
+			$.post("<?=$this->basepath()?>/sonar/assignTD", {
+				id: id,
+				login: assignTo
+			},
+			function(data, status){
+				if (data == '') {
+					location.reload();
+				}
+				else {
+					alert('Error: ' + data);
+				}				
+			});				
+		}
+		else {
+			alert('Select one developer.');
+		}
+    });  
+
+    $("[name*=btnPay]").click(function(){
+		id = $(this).attr('id');
+		realTD = $('#pay' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/payTD", {
+			id: id,
+			realTD: realTD
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });    
+
+
+    $("[name*=btnSeverity]").click(function(){
+		id = $(this).attr('id');
+		severity = $('#severity' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/changeSeverity", {
+			id: id,
+			severity: severity
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });   
+
+    $("[name*=btnStatus]").click(function(){
+		id = $(this).attr('id');
+		status = $('#status' + id).val();
+		
+		$.post("<?=$this->basepath()?>/sonar/changeStatus", {
+			id: id,
+			status: status
+		},
+		function(data, status){
+			if (data == '') {
+				location.reload();
+			}
+			else {
+				alert('Error: ' + data);
+			}				
+		});	
+    });   
+
+});
+
+</script>
+
