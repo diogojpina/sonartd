@@ -18,6 +18,7 @@ use Sonar\Model\TechnicalDebtMeasureModel;
 use Sonar\Model\CharacteristicModel;
 use DoctrineORMModule\Proxy\__CG__\Sonar\Entity\Rule;
 use Zend\View\Model\JsonModel;
+use Zend\Authentication\AuthenticationService;
 
 class SonarController extends AbstractActionController {
 	
@@ -62,6 +63,15 @@ class SonarController extends AbstractActionController {
     
     
     public function list2Action() {
+    	$auth = new AuthenticationService();
+    	if (!$auth->hasIdentity()) {
+    		return $this->redirect()->toRoute('auth');
+    	}
+    	
+    	$user = $auth->getIdentity();
+    	
+    	//echo $user->getName();
+    	
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdCalculator = new TDCalculator();
     	$tdHelper = new TechnicalDebtHelper($projectModel);

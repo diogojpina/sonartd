@@ -2,14 +2,15 @@
 return array (
 		'controllers' => array (
 				'invokables' => array (
-						'Sonar\Controller\Sonar' => 'Sonar\Controller\SonarController' 
+						'Sonar\Controller\Sonar' => 'Sonar\Controller\SonarController',
+						'Sonar\Controller\Auth' => 'Sonar\Controller\AuthController'
 				) 
 		),
 		
 		// The following section is new and should be added to your file
 		'router' => array (
 				'routes' => array (
-						'album' => array (
+						'sonar' => array (
 								'type' => 'segment',
 								'options' => array (
 										'route' => '/sonar[/][:action][/:id]',
@@ -22,7 +23,21 @@ return array (
 												'action' => 'index' 
 										) 
 								) 
-						) 
+						),
+						'auth' => array (
+								'type' => 'segment',
+								'options' => array (
+										'route' => '/auth[/][:action][/:id]',
+										'constraints' => array (
+												'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+												'id' => '[0-9]+'
+										),
+										'defaults' => array (
+												'controller' => 'Sonar\Controller\Auth',
+												'action' => 'index'
+										)
+								)
+						)
 				) 
 		),
 		
