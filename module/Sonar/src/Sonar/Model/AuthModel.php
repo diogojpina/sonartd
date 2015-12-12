@@ -11,14 +11,16 @@ use DoctrineORMModuleTest\Assets\GraphEntity\User;
 
 class AuthModel {
 	private $sm;
+	private $config;
 	
-	public function __construct($sm) {
+	public function __construct($sm, $config) {
 		$this->sm = $sm;
+		$this->config = $config;
 	}	
 	
 	public function login($login, $pass) {
 		$auth = new AuthenticationService();
-		$authAdapter = new SonarAuthAdapter($this->sm, $login, $pass);
+		$authAdapter = new SonarAuthAdapter($this->sm, $this->config, $login, $pass);
 		
 		$result = $auth->authenticate($authAdapter);
 		if (!$result->isValid()) {
@@ -34,15 +36,19 @@ class SonarAuthAdapter implements AdapterInterface {
 	private $sm;
 	private $user;
 	private $pass;
+	private $config;
 	
-	public function __construct($sm, $login, $pass) {
+	public function __construct($sm, $config, $login, $pass) {
 		$this->sm = $sm;
 		$this->login = $login;
 		$this->pass = $pass;
+		$this->config = $config;
 	}
 	
 	public function authenticate() {
-		$url = "http://localhost:9051/api/authentication/validate";
+		$urlAPI = $this->config['sonar']['urlAPI'];
+		
+		$url = "$urlAPI/api/authentication/validate";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

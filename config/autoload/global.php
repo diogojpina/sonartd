@@ -25,4 +25,6 @@ return array(
                      => 'Zend\Db\Adapter\AdapterServiceFactory',
          ),
      ),
+	 'sonar' => array('urlAPI' => 'http://localhost:9051', 'adminLogin' => 'admin', 'adminPass' => 'admin')
+		
 );

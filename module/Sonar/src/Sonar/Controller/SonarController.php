@@ -71,7 +71,7 @@ class SonarController extends AbstractActionController {
     	$user = $auth->getIdentity();
     	
     	//echo $user->getName();
-    	
+    	    	
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdCalculator = new TDCalculator();
     	$tdHelper = new TechnicalDebtHelper($projectModel);
@@ -166,6 +166,11 @@ class SonarController extends AbstractActionController {
     }
     
     public function showCodeAction() {
+    	$config = $this->getServiceLocator()->get('config');
+    	$urlAPI = $config['sonar']['urlAPI'];
+    	$adminLogin = $config['sonar']['adminLogin'];
+    	$adminPass = $config['sonar']['adminPass'];
+    	
     	$issueId = $_GET['id'];
     	
     	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
@@ -175,11 +180,11 @@ class SonarController extends AbstractActionController {
     		$output = '';
     	} else {
     		$kee = $issue->getProject()->getKee();
-    		$url = "http://localhost:9051/api/sources/raw?key=$kee";
+    		$url = "$urlAPI/api/sources/raw?key=$kee";
     		$ch = curl_init();
     		curl_setopt($ch, CURLOPT_URL, $url);
     		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    		curl_setopt($ch, CURLOPT_USERPWD, "admin:admin");
+    		curl_setopt($ch, CURLOPT_USERPWD, "$adminLogin:$adminPass");
     		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     		$output = curl_exec($ch);
     		$info = curl_getinfo($ch);
