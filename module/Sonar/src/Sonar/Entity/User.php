@@ -37,6 +37,11 @@ class User {
 	 **/
 	private $groups;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="Sonar\Entity\UserRoles", mappedBy="user")
+	 **/
+	private $roles;
+	
 	public function getId() {
 		return $this->id;
 	}

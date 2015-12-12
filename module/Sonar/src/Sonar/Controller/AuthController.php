@@ -18,7 +18,7 @@ class AuthController extends AbstractActionController {
 			$authModel = new AuthModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'), $config);
 			$user = $authModel->login($login, $pass);
 			if ($user) {
-				return $this->redirect()->toRoute('sonar', array('action' => 'list2'));
+				return $this->redirect()->toRoute('sonar', array('action' => 'index'));
 			}				
 		}	
 		

@@ -37,6 +37,9 @@ class Project {
     /** @ORM\Column(type="integer") */
     protected $enabled;
     
+    /** @ORM\Column(type="string") */
+    protected $uuid;
+    
     /**
      * @ORM\OneToMany(targetEntity="Sonar\Entity\Issue", mappedBy="project")
      **/
@@ -47,9 +50,17 @@ class Project {
      **/
     private $snapshots;    
     
-    /** @ORM\Column(type="string") */
-    protected $uuid;
-
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Sonar\Entity\GroupRoles", mappedBy="project")
+     **/
+    private $groupRoles;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Sonar\Entity\UserRoles", mappedBy="project")
+     **/
+    private $userRoles;    
+    
 	public function getId() {
 		return $this->id;
 	}

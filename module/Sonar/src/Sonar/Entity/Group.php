@@ -5,7 +5,7 @@ namespace Sonar\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity
- * @ORM\Table(name="group")*/
+ * @ORM\Table(name="groups")*/
 class Group {
 	/**
 	 * @ORM\Id
@@ -25,6 +25,10 @@ class Group {
 	 **/
 	private $users;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="Sonar\Entity\GroupRoles", mappedBy="group")
+	 **/
+	private $roles;
 	
 	public function getId() {
 		return $this->id;

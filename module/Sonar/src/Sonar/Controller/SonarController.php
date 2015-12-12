@@ -23,16 +23,21 @@ use Zend\Authentication\AuthenticationService;
 class SonarController extends AbstractActionController {
 	
 	public function indexAction() {
-		$objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+		$auth = new AuthenticationService();
+		if (!$auth->hasIdentity()) {
+			return $this->redirect()->toRoute('auth');
+		}
+		 
+		$user = $auth->getIdentity();
 		
-		$repository = $objectManager->getRepository('Sonar\Entity\Project');
-		$projects = $repository->findAll();
+		$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+		$tdCalculator = new TDCalculator();
+		$tdHelper = new TechnicalDebtHelper($projectModel);
 		
-		foreach ( $projects as $project ) {
-			print_r ( $project );
-			echo '<br />';
-		}		
-		return new ViewModel ();
+		 
+		$projects = $projectModel->getRootsByUser($user);
+
+		return array('projects' => $projects);
 	}
 	
 	public function listAction() {
@@ -69,15 +74,13 @@ class SonarController extends AbstractActionController {
     	}
     	
     	$user = $auth->getIdentity();
-    	
-    	//echo $user->getName();
     	    	
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdCalculator = new TDCalculator();
     	$tdHelper = new TechnicalDebtHelper($projectModel);
  
     	
-    	$projects = $projectModel->getRoots();
+    	$projects = $projectModel->getRootsByUser($user);
     	
     	$project_id = isset($_GET['project'])?$_GET['project']:0;
     	$file_id = isset($_GET['file'])?$_GET['file']:0;

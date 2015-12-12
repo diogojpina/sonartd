@@ -1,1 +1,15 @@
-Action "index", controller "Sonar", module "Sonar".
+<table class="table table-hover">
+<tr>
+	<th>Project</th>
+	<th>Ações</th>
+</tr>
+<?php foreach ($projects as $project):?>
+<tr>
+	<td><?=$project->getName()?></td>
+	<td>
+		<a href="<?=$this->basepath()?>/sonar/list2?project=<?=$project->getId()?>">Listar TD</a>
+		<a href="<?=$this->basepath()?>/sonar/issues?project=<?=$project->getId()?>">Listar TD2</a>
+	</td>
+</tr>
+<?php endforeach;?>
+</table>

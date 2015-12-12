@@ -3,6 +3,8 @@
 namespace Sonar\Model;
 
 use Sonar\Entity\Project;
+use Sonar\Entity\GroupRoles;
+use Doctrine\ORM\QueryBuilder;
 
 class ProjectModel {
 	private $sm;
@@ -28,6 +30,33 @@ class ProjectModel {
 	
 	public function getRoots() {
 		return $this->repository->findBy(array('scope' => 'PRJ', 'qualifier' => 'TRK', 'enabled' => 1));
+	}
+	
+	public function getRootsByUser($user) {
+		$qb = $this->sm->createQueryBuilder();
+		$qb	->select('p')
+		->from('Sonar\Entity\Project', 'p')
+		//->leftJoin('Sonar\Entity\GroupRoles', 'gr', 'WITH', 'p.id = gr.project')
+		->leftJoin('p.groupRoles', 'gr')
+		//->leftJoin('Sonar\Entity\Group', 'g', 'WITH', 'g.id = gr.group')
+		->leftJoin('gr.group', 'g')
+		->leftJoin('g.users', 'u1')
+		
+		->leftJoin('p.userRoles', 'ur')		
+		->leftJoin('ur.user', 'u2')
+		
+		->where('p.scope = ?1 and p.qualifier = ?2 and p.enabled = ?3 and gr.role = ?4 and (u1.id = ?5 or u2.id = ?5 or u1.id is null)')
+		->orderBy('p.name', 'ASC')
+		->groupBy('p.id')
+		->setParameter(1, 'PRJ')
+		->setParameter(2, 'TRK')
+		->setParameter(3, 1)
+		->setParameter(4, 'user')
+		->setParameter(5, $user->getId());
+		
+		$query = $qb->getQuery();
+		$results = $query->getResult();
+		return $results;
 	}
 	
 	public function getSourceFiles(Project $project) {
