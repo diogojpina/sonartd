@@ -5,13 +5,19 @@ namespace Sonar\TD;
 use Sonar\Entity\Issue;
 use Sonar\Entity\TechnicalDebt;
 use Sonar\Model\TechnicalDebtRegression;
+use Sonar\Entity\TechnicalDebtMeasure;
+use Sonar\Model\TechnicalDebtMeasureModel;
 
 class TDCalculator {
 	private $work_hours = 8;
+	private $sm;
+	
+	public function __construct($sm) {
+		$this->sm = $sm;
+	}
 	
 	
 	public function calc(Issue $issue) {
-		
 		if ($issue->getTechnicalDebt()) {
 			$technicalDebt = $issue->getTechnicalDebt();			
 		} 
@@ -21,9 +27,67 @@ class TDCalculator {
 		}
 		
 		
+		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED') {
+			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);
+			$metrics = $technicalDebt->getMetrics();
+			
+			echo $issue->getProject()->getId() . "\n";
+			echo $technicalDebt->getId() . "\n";
+			
+			echo count($metrics) . "\n";
+			
+			
+			$measures = $issue->getProject()->getSnapshot()->getMeasures();
+			
+			foreach ($measures as $measure) {
+				echo $measure->getMetric()->getId() . " - ";
+				echo $measure->getMetric()->getName() . "\n";
+				
+				$update = true;
+				foreach ($metrics as $metric) {
+					print_r($measure->getRule());
+					if ($measure->getMetric()->getId() == $metric->getMetric()->getId() && 
+						$measure->getRule()->getId() == $metric->getRule()->getId()) {
+						echo $measure->getValue() . " - " . $metric->getValue() . "\n";
+						if ($measure->getValue() == $metric->getValue()) {
+							$update = false;
+						}
+						break;
+					}															
+				}
+				
+				if ($update) {
+					echo "atualizar\n";
+				}				
+			}
+			sleep(5);
+			
+			
+			
+			$tdMeasureModel->deleteByTechnicalDebt($technicalDebt);
+			foreach ($measures as $measure) {
+				$technicalDebtMeasure = new TechnicalDebtMeasure();
+				$technicalDebtMeasure->setMetric($measure->getMetric());
+				$technicalDebtMeasure->setTechnicalDebt($technicalDebt);
+				$technicalDebtMeasure->setValue($measure->getValue());
+				echo $measure->getMetric()->getId() . " - ";
+				echo $measure->getMetric()->getName() . "\n";
+		
+				$tdMeasureModel->save($technicalDebtMeasure);
+			}
+			echo "aqui\n\n";
+		}
+		else {
+			return false;
+		}		
+
+		
+		
 		$technicalDebt->setSonarTD($issue->getTD());
 		
 		$this->calcByModelClass($technicalDebt);
+		
+		return false;
 		
 		//calculate using regression
 		$technicalDebtRegression = new TechnicalDebtRegression();
@@ -45,8 +109,8 @@ class TDCalculator {
 		
 		$className = '\Sonar\TD\\' . $key;
 		if (class_exists($className)) {
-			$obj = new $className($issue);
-			$technicalDebt->setModelTD($obj->getTechnicalDebt());
+			$obj = new $className($technicalDebt);
+			$technicalDebt->setModelTD($obj->getCost());
 		}
 		else {
 			$technicalDebt->setModelTD(0);

@@ -26,6 +26,12 @@ class TechnicalDebtMeasure {
 	 **/
 	private $technicalDebt;
 	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Rule")
+	 * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
+	 */
+	private $rule;
+	
 	/** @ORM\Column(type="decimal") */
 	private $value;
 	
@@ -52,6 +58,10 @@ class TechnicalDebtMeasure {
 	public function setTechnicalDebt($technicalDebt) {
 		$this->technicalDebt = $technicalDebt;
 	}
+	
+	public function getRule() {
+		return $this->rule;
+	}	
 	
 	public function getValue() {
 		return $this->value;

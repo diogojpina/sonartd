@@ -112,6 +112,15 @@ class TechnicalDebt {
 		return $tdHelper->format($this->getTechnicalDebt(), $workHours);
 	}
 	
+	public function getMetrics() {
+		$metrics = array();
+		foreach ($this->measures as $metric) {
+			$name = $metric->getMetric()->getName();
+			$metrics[$name] = $metric;
+		}
+		return $metrics;
+	}
+	
 
 }
 

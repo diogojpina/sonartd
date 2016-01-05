@@ -31,7 +31,7 @@ class SonarController extends AbstractActionController {
 		$user = $auth->getIdentity();
 		
 		$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
-		$tdCalculator = new TDCalculator();
+		$tdCalculator = new TDCalculator($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
 		$tdHelper = new TechnicalDebtHelper($projectModel);
 		
 		 
@@ -42,7 +42,7 @@ class SonarController extends AbstractActionController {
 	
 	public function listAction() {
 		$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
-		$tdCalculator = new TDCalculator();
+		$tdCalculator = new TDCalculator($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
 		 
 		$projects = $projectModel->getRoots();
 		foreach ($projects as $project) {
@@ -76,7 +76,7 @@ class SonarController extends AbstractActionController {
     	$user = $auth->getIdentity();
     	    	
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
-    	$tdCalculator = new TDCalculator();
+    	$tdCalculator = new TDCalculator($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$tdHelper = new TechnicalDebtHelper($projectModel);
  
     	
@@ -205,13 +205,14 @@ class SonarController extends AbstractActionController {
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$technicalDebtModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
-    	$tdCalculator = new TDCalculator();
+    	$tdCalculator = new TDCalculator($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	
     	
     	
     	
     	$project_id = 587;
     	$project = $projectModel->get($project_id);
-    	$files = $projectModel->getSourceFiles($project);    	
+    	$files = $projectModel->getSourceFiles($project);  
     	foreach ($files as $file) {
     		foreach ($file->getIssues() as $issue) {
     			$technicalDebt = $tdCalculator->calc($issue);

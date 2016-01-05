@@ -24,7 +24,13 @@ class ProjectMeasure {
 	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Snapshot", inversedBy="measures")
 	 * @ORM\JoinColumn(name="snapshot_id", referencedColumnName="id")
 	 **/
-	private $snapshot;	
+	private $snapshot;
+
+	/**
+	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Rule")
+	 * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
+	 */
+	private $rule;
 	
 	/** @ORM\Column(type="decimal") */
 	private $value;
@@ -52,6 +58,10 @@ class ProjectMeasure {
 	public function setSnapshot($snapshot) {
 		$this->snapshot = $snapshot;
 	}	
+	
+	public function getRule() {
+		return $this->rule;
+	}
 	
 	public function getValue() {
 		return $this->value;
