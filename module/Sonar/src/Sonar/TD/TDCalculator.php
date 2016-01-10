@@ -7,6 +7,7 @@ use Sonar\Entity\TechnicalDebt;
 use Sonar\Model\TechnicalDebtRegression;
 use Sonar\Entity\TechnicalDebtMeasure;
 use Sonar\Model\TechnicalDebtMeasureModel;
+use Sonar\Model\TechnicalDebtModel;
 
 class TDCalculator {
 	private $work_hours = 8;
@@ -16,78 +17,36 @@ class TDCalculator {
 		$this->sm = $sm;
 	}
 	
-	
 	public function calc(Issue $issue) {
+		$technicalDebtModel = new TechnicalDebtModel($this->sm);
+		
+		echo "ID: " . $issue->getId() . "\n";
+		//echo $issue->getRule()->getPluginRuleKey() . "\n";
+		
 		if ($issue->getTechnicalDebt()) {
 			$technicalDebt = $issue->getTechnicalDebt();			
 		} 
 		else {
 			$technicalDebt = new TechnicalDebt();
 			$technicalDebt->setIssue($issue);
+			$technicalDebtModel->save($technicalDebt);
 		}
-		
-		
-		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED') {
-			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);
-			$metrics = $technicalDebt->getMetrics();
-			
-			echo $issue->getProject()->getId() . "\n";
-			echo $technicalDebt->getId() . "\n";
-			
-			echo count($metrics) . "\n";
-			
-			
-			$measures = $issue->getProject()->getSnapshot()->getMeasures();
-			
-			foreach ($measures as $measure) {
-				echo $measure->getMetric()->getId() . " - ";
-				echo $measure->getMetric()->getName() . "\n";
-				
-				$update = true;
-				foreach ($metrics as $metric) {
-					print_r($measure->getRule());
-					if ($measure->getMetric()->getId() == $metric->getMetric()->getId() && 
-						$measure->getRule()->getId() == $metric->getRule()->getId()) {
-						echo $measure->getValue() . " - " . $metric->getValue() . "\n";
-						if ($measure->getValue() == $metric->getValue()) {
-							$update = false;
-						}
-						break;
-					}															
-				}
-				
-				if ($update) {
-					echo "atualizar\n";
-				}				
-			}
-			sleep(5);
-			
-			
-			
-			$tdMeasureModel->deleteByTechnicalDebt($technicalDebt);
-			foreach ($measures as $measure) {
-				$technicalDebtMeasure = new TechnicalDebtMeasure();
-				$technicalDebtMeasure->setMetric($measure->getMetric());
-				$technicalDebtMeasure->setTechnicalDebt($technicalDebt);
-				$technicalDebtMeasure->setValue($measure->getValue());
-				echo $measure->getMetric()->getId() . " - ";
-				echo $measure->getMetric()->getName() . "\n";
-		
-				$tdMeasureModel->save($technicalDebtMeasure);
-			}
-			echo "aqui\n\n";
-		}
-		else {
-			return false;
-		}		
 
+		//echo "Setting measures\n";
+		$this->setMeasures($technicalDebt);		
+		//echo "Setted measures\n";
 		
+		//$technicalDebt = $technicalDebtModel->get($technicalDebt->getId());
+		$technicalDebtModel->refresh($technicalDebt);
 		
 		$technicalDebt->setSonarTD($issue->getTD());
 		
+		echo count($technicalDebt->getMeasures()) . "\n";
 		$this->calcByModelClass($technicalDebt);
 		
-		return false;
+		$technicalDebtModel->save($technicalDebt);
+		
+		return $technicalDebt;
 		
 		//calculate using regression
 		$technicalDebtRegression = new TechnicalDebtRegression();
@@ -101,6 +60,80 @@ class TDCalculator {
 		
 		
 		return $technicalDebt;
+	}
+	
+	private function isSameMeasure($measure1, $measure2) {
+		if ($measure1->getMetric()->getId() == $measure2->getMetric()->getId()) {
+			if ($measure1->getRule() && $measure2->getRule()) {
+				if ($measure1->getRule()->getId() == $measure2->getRule()->getId()) {
+					return true;
+				}
+			}
+			else if ($measure1->getCharacteristic() && $measure2->getCharacteristic()) {
+				if ($measure1->getCharacteristic()->getId() == $measure2->getCharacteristic()->getId()) {
+					return true;
+				}
+			}
+			else if (($measure1->getRule() == null && $measure2->getRule() == null) &&
+			($measure1->getCharacteristic() == null && $measure2->getCharacteristic() == null)) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	private function setMeasures(TechnicalDebt $technicalDebt) {
+		$issue = $technicalDebt->getIssue();
+		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED') {
+			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);
+			
+			/*
+			echo $issue->getProject()->getId() . "\n";
+			echo $issue->getProject()->getSnapshot()->getId() . "\n";
+			echo $technicalDebt->getId() . "\n";				
+			*/
+				
+				
+			$measures = $issue->getProject()->getSnapshot()->getMeasures();
+			$tdMeasures = $technicalDebt->getMeasures();
+			//echo $issue->getProject()->getId() . "\n";		
+			//echo count($measures) . "\n";
+				
+			foreach ($measures as $measure) {
+				/*
+				echo $measure->getId() . " - ";
+				echo $measure->getMetric()->getId() . " - ";
+				echo $measure->getMetric()->getName() . "\n";
+				*/
+		
+				$update = true;
+				$tdMeasureToUpdate = null;
+				foreach ($tdMeasures as $tdMeasure) {
+					if ($this->isSameMeasure($measure, $tdMeasure) == true) {
+						if ($measure->getValue() == $tdMeasure->getValue()) {
+							$tdMeasureToUpdate = $tdMeasure;
+							$update = false;
+						}
+						break;
+					}
+				}
+		
+				if ($update) {
+					if ($tdMeasureToUpdate == null) {
+						$tdMeasureToUpdate = new TechnicalDebtMeasure();
+						$tdMeasureToUpdate->setTechnicalDebt($technicalDebt);
+						$tdMeasureToUpdate->setMetric($measure->getMetric());
+						$tdMeasureToUpdate->setRule($measure->getRule());
+						$tdMeasureToUpdate->setCharacteristic($measure->getCharacteristic());
+					}
+						
+					$tdMeasureToUpdate->setValue($measure->getValue());
+					$tdMeasureModel->save($tdMeasureToUpdate);
+						
+					//echo "atualizar\n";
+				}
+			}
+		}		
 	}
 	
 	private function calcByModelClass(TechnicalDebt $technicalDebt) {

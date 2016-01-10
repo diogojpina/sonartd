@@ -3,21 +3,28 @@
 namespace Sonar\TD;
 
 class Metrics {
-	private $metrics;
+	private $technicalDebt;
 	
 	public function __construct($technicalDebt) {
-		$this->metrics = $technicalDebt->getMetrics();
+		$this->technicalDebt = $technicalDebt;
 	}
 	
 	public function __call($name, $arguments) {
 		$metricName = strtolower($name);
 		$metricName = str_replace('get', '', $metricName);
-		echo $metricName . "\n";
-		if(array_key_exists($metricName, $this->metrics) == false) { 		
-			trigger_error("Undefined method $name in Metrics", E_USER_ERROR);
+		return $this->getValue($metricName);
+	}
+	
+	private function getValue($metricName) {
+		echo $this->technicalDebt->getId() . ' - ';
+		echo count($this->technicalDebt->getMeasures()) . " abc\n";
+		foreach ($this->technicalDebt->getMeasures() as $measure) {			
+			echo $measure->getMetric()->getName() . "\n";
+			if ($measure->getMetric()->getName() == $metricName) {
+				return $measure->getValue();
+			}
 		}
-		
-		return $this->metrics['$metricName']->getValue() . "\n";
+		trigger_error("Undefined method $metricName in Metrics", E_USER_ERROR);
 	}
 	
 }

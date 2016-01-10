@@ -7,10 +7,10 @@ class S00105 extends TechnicalDebtCalculator {
 
 		$limit = 100;
 		if ($this->metrics->getLines() < $limit) {
-			return $this->metrics->getLine();
+			return $this->metrics->getLines();
 		}	
 		else {
-			return $limit + log($this->metrics->getLine());
+			return $limit + log($this->metrics->getLines());
 		}
 	}
 }

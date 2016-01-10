@@ -32,6 +32,12 @@ class ProjectMeasure {
 	 */
 	private $rule;
 	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Characteristic")
+	 * @ORM\JoinColumn(name="characteristic_id", referencedColumnName="id")
+	 */
+	private $characteristic;
+	
 	/** @ORM\Column(type="decimal") */
 	private $value;
 	
@@ -61,6 +67,10 @@ class ProjectMeasure {
 	
 	public function getRule() {
 		return $this->rule;
+	}
+	
+	public function getCharacteristic() {
+		return $this->characteristic;
 	}
 	
 	public function getValue() {

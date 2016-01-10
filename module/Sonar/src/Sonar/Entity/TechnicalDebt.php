@@ -23,7 +23,7 @@ class TechnicalDebt {
 	protected $issue;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Sonar\Entity\TechnicalDebtMeasure", mappedBy="technicalDebt")
+	 * @ORM\OneToMany(targetEntity="Sonar\Entity\TechnicalDebtMeasure", mappedBy="technicalDebt", cascade={"all"})
 	 **/
 	private $measures;	
 	

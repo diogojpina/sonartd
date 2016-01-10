@@ -18,11 +18,20 @@ class TechnicalDebtModel {
 		$this->repository = $sm->getRepository('Sonar\Entity\TechnicalDebt');
 	}
 	
+	public function refresh(TechnicalDebt $technicalDebt) {
+		$this->sm->refresh($technicalDebt);
+	}
+	
 	public function save(TechnicalDebt $technicalDebt) {
 		if (!$technicalDebt->getId()) {
 			$this->sm->persist($technicalDebt);
 		}
 		$this->sm->flush();
+	}
+	
+	public function get($id) {
+		$id = (int) $id;
+		return $this->sm->find('Sonar\Entity\TechnicalDebt', $id);
 	}
 	
 	public function getByProject(Project $project) {

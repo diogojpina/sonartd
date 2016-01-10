@@ -3,6 +3,7 @@
 namespace Sonar\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Zend\Crypt\PublicKey\Rsa\PublicKey;
 
 /** @ORM\Entity
  * @ORM\Table(name="technical_debt_measures")*/
@@ -31,6 +32,12 @@ class TechnicalDebtMeasure {
 	 * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
 	 */
 	private $rule;
+	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Sonar\Entity\Characteristic")
+	 * @ORM\JoinColumn(name="characteristic_id", referencedColumnName="id")
+	 */
+	private $characteristic;
 	
 	/** @ORM\Column(type="decimal") */
 	private $value;
@@ -61,7 +68,19 @@ class TechnicalDebtMeasure {
 	
 	public function getRule() {
 		return $this->rule;
-	}	
+	}
+	
+	public function setRule($rule) {
+		$this->rule = $rule;
+	}
+	
+	public function getCharacteristic() {
+		return $this->characteristic;
+	}
+	
+	public function setCharacteristic($characteristic) {
+		$this->characteristic = $characteristic;
+	}
 	
 	public function getValue() {
 		return $this->value;
