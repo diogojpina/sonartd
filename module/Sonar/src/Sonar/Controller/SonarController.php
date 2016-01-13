@@ -208,12 +208,41 @@ class SonarController extends AbstractActionController {
     	$tdCalculator = new TDCalculator($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	
     	
-    	$project_id = 587;
-    	$project = $projectModel->get($project_id);
-    	$files = $projectModel->getSourceFiles($project);  
-    	foreach ($files as $file) {
-    		foreach ($file->getIssues() as $issue) {
-    			$technicalDebt = $tdCalculator->calc($issue);
+    	echo "Associando as issues aos componente.\n";
+    	$issueModel->updateComponentId();
+    	echo "Issues associadas aos componentes.\n\n";
+    	
+    	$issues = $issueModel->findAll();
+    	
+    	$n = count($issues);
+    	$i = 0;
+    	foreach ($issues as $issue) {
+    		echo "--" . ++$i . '/' . $n . "\n";
+    		$technicalDebt = $tdCalculator->calc($issue);    		
+    	}
+    	
+    	return false;
+    		
+    	
+    	
+   	
+    	//$project_id = 587;
+    	//$project = $projectModel->get($project_id);
+    	$projects = $projectModel->getRoots();
+    	foreach ($projects as $project) {
+    		echo $project->getName() . "\n";    		
+    		$files = $projectModel->getSourceFiles($project);
+    		$m = count($files);
+    		$j = 0;
+    		foreach ($files as $file) {
+    			echo $file->getName();
+    			echo "--" . ++$j . '/' . $m . "\n";
+    			$n = count($file->getIssues());
+    			$i = 0;
+    			foreach ($file->getIssues() as $issue) {
+    				echo "--" . ++$i . '/' . $n . "\n";
+    				$technicalDebt = $tdCalculator->calc($issue);
+	    		}
     		}
     	}
     	
