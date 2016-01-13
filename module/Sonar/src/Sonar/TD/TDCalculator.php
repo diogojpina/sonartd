@@ -36,6 +36,12 @@ class TDCalculator {
 		
 		$technicalDebtModel->refresh($technicalDebt);
 		
+		$tdMeasures = $technicalDebt->getMeasures();
+		if (count($tdMeasures) == 0) {
+			echo 'aqui';
+			return false;
+		}
+		
 		$technicalDebt->setSonarTD($issue->getTD());
 		
 		//echo count($technicalDebt->getMeasures()) . "\n";
@@ -83,7 +89,12 @@ class TDCalculator {
 	
 	private function setMeasures(TechnicalDebt $technicalDebt) {
 		$issue = $technicalDebt->getIssue();
-		$measures = $issue->getProject()->getSnapshot()->getMeasures();
+		$project = $issue->getProject();
+		if (!$project) return false;		
+		$snapshot = $project->getSnapshot();
+		if (!$snapshot) return false;		
+		$measures = $snapshot->getMeasures();
+		if (!$measures) return false;
 		$tdMeasures = $technicalDebt->getMeasures();
 		
 		
