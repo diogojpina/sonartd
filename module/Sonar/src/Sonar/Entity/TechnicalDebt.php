@@ -56,6 +56,8 @@ class TechnicalDebt {
 	}
 	
 	public function getMeasures() {
+		if ($this->measures == null)
+			return array();
 		return $this->measures;
 	}
 	

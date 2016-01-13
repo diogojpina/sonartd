@@ -17,14 +17,14 @@ class TDCalculator {
 		$this->sm = $sm;
 	}
 	
-	public function calc(Issue $issue) {
+	public function calc(Issue $issue) {		
 		$technicalDebtModel = new TechnicalDebtModel($this->sm);
 		
-		echo "ID: " . $issue->getId() . "\n";
+		//echo "ID: " . $issue->getId() . "\n";
 		//echo $issue->getRule()->getPluginRuleKey() . "\n";
 		
 		if ($issue->getTechnicalDebt()) {
-			$technicalDebt = $issue->getTechnicalDebt();			
+			$technicalDebt = $technicalDebtModel->get($issue->getTechnicalDebt()->getID());			
 		} 
 		else {
 			$technicalDebt = new TechnicalDebt();
@@ -32,19 +32,18 @@ class TDCalculator {
 			$technicalDebtModel->save($technicalDebt);
 		}
 
-		//echo "Setting measures\n";
 		$this->setMeasures($technicalDebt);		
-		//echo "Setted measures\n";
 		
-		//$technicalDebt = $technicalDebtModel->get($technicalDebt->getId());
 		$technicalDebtModel->refresh($technicalDebt);
 		
 		$technicalDebt->setSonarTD($issue->getTD());
 		
-		echo count($technicalDebt->getMeasures()) . "\n";
+		//echo count($technicalDebt->getMeasures()) . "\n";
 		$this->calcByModelClass($technicalDebt);
 		
 		$technicalDebtModel->save($technicalDebt);
+		
+		$this->sm->clear();
 		
 		return $technicalDebt;
 		
@@ -84,7 +83,11 @@ class TDCalculator {
 	
 	private function setMeasures(TechnicalDebt $technicalDebt) {
 		$issue = $technicalDebt->getIssue();
-		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED') {
+		$measures = $issue->getProject()->getSnapshot()->getMeasures();
+		$tdMeasures = $technicalDebt->getMeasures();
+		
+		
+		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED' || count($tdMeasures) == 0) {
 			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);
 			
 			/*
@@ -94,10 +97,9 @@ class TDCalculator {
 			*/
 				
 				
-			$measures = $issue->getProject()->getSnapshot()->getMeasures();
-			$tdMeasures = $technicalDebt->getMeasures();
+			
 			//echo $issue->getProject()->getId() . "\n";		
-			//echo count($measures) . "\n";
+			//echo "project measures: " . count($measures) . "\n";
 				
 			foreach ($measures as $measure) {
 				/*
@@ -128,11 +130,13 @@ class TDCalculator {
 					}
 						
 					$tdMeasureToUpdate->setValue($measure->getValue());
-					$tdMeasureModel->save($tdMeasureToUpdate);
+					$this->sm->persist($tdMeasureToUpdate);
+					//$tdMeasureModel->save($tdMeasureToUpdate);
 						
 					//echo "atualizar\n";
 				}
 			}
+			$this->sm->flush();
 		}		
 	}
 	

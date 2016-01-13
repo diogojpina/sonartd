@@ -73,6 +73,17 @@ class IssueModel {
 		return $results;
 	}
 	
+	private function findWithOutComponent() {
+		$qb = $this->sm->createQueryBuilder();
+		$qb	->select('i')
+		->from('Sonar\Entity\Issue', 'i')
+		->where('i.component_id is null');
+		
+		$query = $qb->getQuery();
+		$results = $query->getResult();
+		return $results;
+	}
+	
 	public function save(Issue $issue) {
 		if (!$issue->getId()) {
 			$this->sm->persist($issue);
@@ -80,11 +91,11 @@ class IssueModel {
 		$this->sm->flush();
 	}
 	
+	
 	public function updateComponentId() {
 		$projectModel = new ProjectModel($this->sm);
-		$issues = $this->repository->findAll();
+		$issues = $this->findWithOutComponent();
 
-		
 		$i = 0;
 		$n = count($issues);
 		foreach ($issues as $issue) {
@@ -92,12 +103,12 @@ class IssueModel {
 			if ($issue->getProject()) {
 				continue;
 			}
+
 			$uuid = $issue->getComponentUUID();
 			$project = $projectModel->getByUUID($uuid);			
-
 			$issue->setProject($project);
-			$this->save($issue);			
 		}		
+		$this->sm->flush();
 	}
 }
 

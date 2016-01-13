@@ -202,6 +202,7 @@ class SonarController extends AbstractActionController {
     }
     
     public function calcAction() {
+    	$sm = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$technicalDebtModel = new TechnicalDebtModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
@@ -212,13 +213,16 @@ class SonarController extends AbstractActionController {
     	$issueModel->updateComponentId();
     	echo "Issues associadas aos componentes.\n\n";
     	
+    	
     	$issues = $issueModel->findAll();
+    	$sm->clear();
     	
     	$n = count($issues);
     	$i = 0;
     	foreach ($issues as $issue) {
+    		$issue2 = $issueModel->get($issue->getId());
     		echo "--" . ++$i . '/' . $n . "\n";
-    		$technicalDebt = $tdCalculator->calc($issue);    		
+    		$technicalDebt = $tdCalculator->calc($issue2);    		
     	}
     	
     	return false;
