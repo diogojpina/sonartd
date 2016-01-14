@@ -30,6 +30,9 @@ class Snapshot {
 	 **/
 	private $measures;
 	
+	/** @ORM\Column(type="integer") */
+	protected $islast;
+	
 	public function getId() {
 		return $this->id;
 	}
@@ -72,6 +75,10 @@ class Snapshot {
 	
 	public function setMeasures($measures) {
 		$this->measures = $measures;
+	}
+	
+	public function isLast() {
+		return $this->islast;
 	}
 	
 }

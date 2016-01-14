@@ -20,7 +20,7 @@ class TDCalculator {
 	public function calc(Issue $issue) {		
 		$technicalDebtModel = new TechnicalDebtModel($this->sm);
 		
-		//echo "ID: " . $issue->getId() . "\n";
+		echo "ID: " . $issue->getId() . "\n";
 		//echo $issue->getRule()->getPluginRuleKey() . "\n";
 		
 		if ($issue->getTechnicalDebt()) {
@@ -36,13 +36,15 @@ class TDCalculator {
 		
 		$technicalDebtModel->refresh($technicalDebt);
 		
+		$technicalDebt->setSonarTD($issue->getTD());
+		
 		$tdMeasures = $technicalDebt->getMeasures();
 		if (count($tdMeasures) == 0) {
-			echo 'aqui';
+			echo "Não encontrou medidas para este ID\n";
+			$technicalDebtModel->save($technicalDebt);
+			$this->sm->clear();
 			return false;
 		}
-		
-		$technicalDebt->setSonarTD($issue->getTD());
 		
 		//echo count($technicalDebt->getMeasures()) . "\n";
 		$this->calcByModelClass($technicalDebt);
@@ -98,8 +100,10 @@ class TDCalculator {
 		$tdMeasures = $technicalDebt->getMeasures();
 		
 		
+		
+		
 		if ($issue->getStatus() == 'OPEN' || $issue->getStatus() == 'CONFIRMED' || count($tdMeasures) == 0) {
-			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);
+			$tdMeasureModel = new TechnicalDebtMeasureModel($this->sm);			
 			
 			/*
 			echo $issue->getProject()->getId() . "\n";

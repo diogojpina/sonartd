@@ -24,6 +24,11 @@ class IssueModel {
 		return $issues = $this->repository->findAll();
 	}
 	
+	public function findAllIterator() {
+		$query = $this->sm->createQuery('select i from Sonar\Entity\Issue i');
+		return $query->iterate();
+	}
+	
 	public function find(Project $project, $filters) {		
 		$where = '';	
 		if ($filters['severities']) {			

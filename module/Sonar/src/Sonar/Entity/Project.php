@@ -131,6 +131,8 @@ class Project {
 	}	
 	
 	public function getSnapshots() {
+		if ($this->snapshots == null)
+			return array();
 		return $this->snapshots;
 	}
 	
@@ -140,9 +142,10 @@ class Project {
 	
 	public function getSnapshot() {
 		foreach ($this->snapshots as $snapshot) {
-			
+			if ($snapshot->isLast() == 1)
+				return $snapshot;
 		}
-		return $snapshot;				
+		return null;				
 	}
 	
 	public function getUUId() {

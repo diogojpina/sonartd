@@ -214,6 +214,21 @@ class SonarController extends AbstractActionController {
     	echo "Issues associadas aos componentes.\n\n";
     	
     	
+    	/*
+    	$issue = $issueModel->get(16704);
+    	$technicalDebt = $tdCalculator->calc($issue);
+    	return false;
+    	*/
+    	
+    	
+    	$iterableResult = $issueModel->findAllIterator();    	
+    	foreach ($iterableResult as $row) {
+    		$issue = $row[0];
+    		$technicalDebt = $tdCalculator->calc($issue);
+		}    	
+    	return false;
+    	
+    	
     	$issues = $issueModel->findAll();
     	$sm->clear();
     	
