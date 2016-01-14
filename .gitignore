@@ -11,3 +11,4 @@ vendor/bin
 vendor/*
 doctrine.global.php
 data/DoctrineORMModule/Proxy/*
+config/autoload/global.php
