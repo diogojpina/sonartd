@@ -29,6 +29,22 @@ class IssueModel {
 		return $query->iterate();
 	}
 	
+	public function findIterator(Project $project) {
+		$qb = $this->sm->createQueryBuilder();
+		$qb	->select('i')
+		->from('Sonar\Entity\Issue', 'i')
+		->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
+		->where('p.uuid = ?1 ')
+		->orderBy('i.id', 'ASC')
+		->setParameter(1, $project->getUUId());
+		
+		$query = $qb->getQuery();
+		
+		
+		
+		return $query->iterate();
+	}
+	
 	public function find(Project $project, $filters) {		
 		$where = '';	
 		if ($filters['severities']) {			

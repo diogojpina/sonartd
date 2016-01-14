@@ -25,7 +25,7 @@ class ProjectModel {
 	}
 	
 	public function getByUUID($uuid) {
-		return$projects = $this->repository->findOneBy(array('uuid' => $uuid));
+		return $projects = $this->repository->findOneBy(array('uuid' => $uuid));
 	}	
 	
 	public function getRoots() {

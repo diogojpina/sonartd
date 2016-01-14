@@ -47,7 +47,7 @@ return array (
 								'calcTD' => array(
 										'type'    => 'simple',
 										'options' => array(
-												'route'    => 'calc TD',
+												'route'    => 'calc TD <project_id>',
 												'defaults' => array(
 														'controller' => 'Sonar\Controller\Sonar',
 														'action'     => 'calc'
