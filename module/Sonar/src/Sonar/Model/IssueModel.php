@@ -82,6 +82,19 @@ class IssueModel {
 			$where .= ' and i.resolution is null';
 		}
 		
+		if ($filters['users']) {
+			$where .= ' and (';
+			$i = 1;
+			foreach ($filters['users'] as $user) {
+				$where .= " i.assignee = '$user' ";
+				if ($i < count($filters['users'])) {
+				$where .= ' or ';
+				}
+				$i++;
+			}
+			$where .= ')';
+		}		
+		
 		$first = ($page - 1) * $limit;
 						
 		$qb = $this->sm->createQueryBuilder();

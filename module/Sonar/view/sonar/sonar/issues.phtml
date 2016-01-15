@@ -1,10 +1,11 @@
+<h1><?php echo $project->getName()?></h1>
 <div class="row">
   <div class="col-md-3">
   	<h3>Filters</h3>
   	<form method="get" id="form">
   	<input type="hidden" name="project" value="<?=$project->getId()?>">
   	  	
-  	Severity:<br />
+  	<b>Severity:</b><br />
   	<input type="checkbox" name="severity[]" value="BLOCKER" <?php if (in_array('BLOCKER', $filters['severities'])) echo 'checked="checked"';?>> Blocker
   	<input type="checkbox" name="severity[]" value="CRITICAL" <?php if (in_array('CRITICAL', $filters['severities'])) echo 'checked="checked"';?>> Critical
   	<br />
@@ -13,7 +14,7 @@
   	<input type="checkbox" name="severity[]" value="INFO" <?php if (in_array('INFO', $filters['severities'])) echo 'checked="checked"';?>> Info
   	<br />
   	
-  	Resolution:<br />
+  	<b>Resolution:</b><br />
   	<input type="checkbox" name="resolution[]" value="UNRESOLVED" <?php if (in_array('UNRESOLVED', $filters['resolutions']) || !$filters['resolutions']) echo 'checked="checked"';?>> Unresolved 
   	<input type="checkbox" name="resolution[]" value="FALSE-POSITIVE" <?php if (in_array('FALSE-POSITIVE', $filters['resolutions'])) echo 'checked="checked"';?>> False Positive
   	<br />
@@ -21,6 +22,12 @@
   	<input type="checkbox" name="resolution[]" value="FIXED" <?php if (in_array('FIXED', $filters['resolutions'])) echo 'checked="checked"';?>> Fixed    
   	<input type="checkbox" name="resolution[]" value="WONTFIX" <?php if (in_array('WONTFIX', $filters['resolutions'])) echo 'checked="checked"';?>> Won't Fix
   	<br />
+  	
+  	<b>Assign to:</b><br />
+  	<?php foreach ($users as $user):?>
+  		<input type="checkbox" name="users[]" value="<?=$user->getLogin()?>" <?php if (in_array($user->getLogin(), $filters['users']))echo 'checked="checked"';?> /> 
+  		<?=$user->getName()?> <br />
+  	<?php endforeach;?>
   	
   	<br />
   	<input type="button" id="btnSubmit" value="Filter" />

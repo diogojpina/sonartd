@@ -158,8 +158,9 @@ class SonarController extends AbstractActionController {
         	
     	$severities = isset($_GET['severity'])?$_GET['severity']:array();
     	$resolutions = isset($_GET['resolution'])?$_GET['resolution']:array();
+    	$usersFilter = isset($_GET['users'])?$_GET['users']:array();
     	
-    	$filters = array('severities' => $severities, 'resolutions' => $resolutions);
+    	$filters = array('severities' => $severities, 'resolutions' => $resolutions, 'users' => $usersFilter);
     	
     	$page = isset($_GET['page'])?$_GET['page']:1;
     	
@@ -168,7 +169,7 @@ class SonarController extends AbstractActionController {
     	
     	$npages = $result['npages'];    	
     	
-    	$users = $userModel->findAll();
+    	$users = $userModel->findByProject($project);
     	
     	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'filters' => $filters, 'page' => $page, 'npages' => $npages);    	
     }
