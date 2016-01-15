@@ -161,11 +161,16 @@ class SonarController extends AbstractActionController {
     	
     	$filters = array('severities' => $severities, 'resolutions' => $resolutions);
     	
-    	$issues = $issueModel->find($project, $filters);
+    	$page = isset($_GET['page'])?$_GET['page']:1;
+    	
+    	$result = $issueModel->find($project, $filters, 30, $page);
+    	$issues = $result['issues'];
+    	
+    	$npages = $result['npages'];    	
     	
     	$users = $userModel->findAll();
     	
-    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'filters' => $filters);    	
+    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'filters' => $filters, 'page' => $page, 'npages' => $npages);    	
     }
     
     public function showCodeAction() {

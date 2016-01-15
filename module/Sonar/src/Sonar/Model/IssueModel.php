@@ -4,6 +4,7 @@ namespace Sonar\Model;
 
 use Sonar\Entity\Issue;
 use Sonar\Entity\Project;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class IssueModel {
 	private $sm;
@@ -45,7 +46,7 @@ class IssueModel {
 		return $query->iterate();
 	}
 	
-	public function find(Project $project, $filters) {		
+	public function find(Project $project, $filters, $limit=30, $page=1) {		
 		$where = '';	
 		if ($filters['severities']) {			
 			$where .= ' and (';			
@@ -80,18 +81,26 @@ class IssueModel {
 		else {
 			$where .= ' and i.resolution is null';
 		}
-				
+		
+		$first = ($page - 1) * $limit;
+						
 		$qb = $this->sm->createQueryBuilder();
 		$qb	->select('i')
    			->from('Sonar\Entity\Issue', 'i')
    			->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
    			->where('p.uuid = ?1 ' . $where	)
    			->orderBy('i.id', 'ASC')
+   			->setFirstResult($first)
+   			->setMaxResults($limit)
 			->setParameter(1, $project->getUUId());
+
+		$paginator = new Paginator($qb);		
+		$npages = ceil(count($paginator) / $limit);
 		
-		$query = $qb->getQuery();		
+		
+		$query = $qb->getQuery();
 		$results = $query->getResult();		
-		return $results;
+		return array('issues' => $results, 'npages' => $npages);
 	}
 	
 	private function findWithOutComponent() {

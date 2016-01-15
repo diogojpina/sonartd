@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-md-3">
   	<h3>Filters</h3>
-  	<form method="get">
+  	<form method="get" id="form">
   	<input type="hidden" name="project" value="<?=$project->getId()?>">
-  	
+  	  	
   	Severity:<br />
   	<input type="checkbox" name="severity[]" value="BLOCKER" <?php if (in_array('BLOCKER', $filters['severities'])) echo 'checked="checked"';?>> Blocker
   	<input type="checkbox" name="severity[]" value="CRITICAL" <?php if (in_array('CRITICAL', $filters['severities'])) echo 'checked="checked"';?>> Critical
@@ -24,6 +24,8 @@
   	
   	<br />
   	<input type="submit" value="Filter" />
+  	
+  	<input type="hidden" id="page" name="page" value="<?=$page?>">
   	</form>
   </div>
   <div class="col-md-9">
@@ -58,11 +60,48 @@
 <?php endforeach;?>
 <!-- List Issues -->  	
 
+<nav>
+<ul class="pagination">
+<li>
+<a href="#" class="paginatorButton" data-page="1" aria-label="First">
+<span aria-hidden="true" >&laquo;</span>
+</a>
+</li>
+<?php 
+$begin = max(1, $page-5+1);
+$end = min($npages, $begin+10-1);
+for ($i=$begin; $i <= $end; $i++):?>
+<li>
+<a href="#" class="paginatorButton" data-page="<?=$i?>">
+<?=$i?> &nbsp;
+</a>
+</li>
+<?php endfor;?>
+<?php if ($end < $npages):?>
+<li><a>...</a></li>
+<?php endif;?>
+<li>
+<a href="#" class="paginatorButton" data-page="<?=$npages?>" aria-label="Last">
+<span aria-hidden="true" >&raquo;</span>
+</a>
+</li>
+</ul>
+</nav>
   </div>
 </div>
 
+
+
+
 <script type="text/javascript">
 $(document).ready(function(){
+    $(".paginatorButton").click(function(){
+		var page = $(this).data("page");
+		$('#page').val(page);
+		console.log($('#page').val());		
+		$('#form').submit();
+    });
+	
     $("[name*=btnComment]").click(function(){
 		id = $(this).attr('id');
 		comment = $('#comment' + id).val();
