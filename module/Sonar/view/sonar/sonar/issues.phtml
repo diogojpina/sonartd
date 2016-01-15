@@ -23,7 +23,7 @@
   	<br />
   	
   	<br />
-  	<input type="submit" value="Filter" />
+  	<input type="button" id="btnSubmit" value="Filter" />
   	
   	<input type="hidden" id="page" name="page" value="<?=$page?>">
   	</form>
@@ -95,10 +95,14 @@ for ($i=$begin; $i <= $end; $i++):?>
 
 <script type="text/javascript">
 $(document).ready(function(){
+    $("#btnSubmit").click(function(){
+		$('#page').val(1);
+		$('#form').submit();
+    });
+	
     $(".paginatorButton").click(function(){
 		var page = $(this).data("page");
-		$('#page').val(page);
-		console.log($('#page').val());		
+		$('#page').val(page);				
 		$('#form').submit();
     });
 	
