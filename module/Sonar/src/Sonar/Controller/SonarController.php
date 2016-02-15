@@ -19,6 +19,7 @@ use Sonar\Model\CharacteristicModel;
 use DoctrineORMModule\Proxy\__CG__\Sonar\Entity\Rule;
 use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationService;
+use Sonar\Model\TechnicalDebtRegression;
 
 class SonarController extends AbstractActionController {
 	
@@ -224,11 +225,20 @@ class SonarController extends AbstractActionController {
     	$project_id = $request->getParam('project_id');
     	$project = $projectModel->get($project_id);    
     	echo "Calculando para: " . $project->getName() . "\n";	
+    	
+    	
     	$iterableResult = $issueModel->findIterator($project);    	
     	foreach ($iterableResult as $row) {
     		$issue = $row[0];
     		$technicalDebt = $tdCalculator->calc($issue);
-		}    	
+		}
+		
+		/*
+		$technicalDebts = $technicalDebtModel->findPayed($project);
+		$technicalDebtRegression = new TechnicalDebtRegression();
+		$technicalDebtRegression->calc($technicalDebts);
+		*/
+		
     	return false;
     	
     	

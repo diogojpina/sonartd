@@ -11,13 +11,63 @@ class TechnicalDebtRegression {
 							'comment_lines_density', 'duplicated_lines',   
 							'violations', 'open_issues');
 	private $minIssues = 5;
+	
+	public function calc($technicalDebts) {
+		$debts = array();
 		
-	public function calc(TechnicalDebt $technicalDebt) {
+		foreach ($technicalDebts as $technicalDebt) {
+			$debts[] = $technicalDebt;
+			/*
+			if ($technicalDebt->getIssue()->getRule()->getId() != $technicalOld->getIssue()->getRule()->getId()) {
+							
+			} 
+			*/
+			//precisa agrupar por rules, quando a rule mudar chamar o método de calculo
+			
+			$tdOld = $technicalDebt;
+		}
+		$this->calcRegression($debts);
+		
+	}
+	
+	public function calcRegression($technicalDebts) {
+		//se tiver poucas issues parar aqui, pois a regressão ficará ruim
+		if (count($technicalDebts) < 5) {
+			echo "não tem o suficiente.\n";
+			return 0;
+		}
+		
+		foreach ($technicalDebts as $technicalDebt) {
+			
+		}
+	}
+		
+	public function calc2(TechnicalDebt $technicalDebt) {
 		$issue = $technicalDebt->getIssue();
 		
 		//verificar se a issue já foi finalizada e medida
 		
+		$metrics = array();
+		$rule = $issue->getRule();
+		$issues = $rule->getIssues();
+			
+		//se tiver poucas issues parar aqui, pois a regressão ficará ruim
+		if (count($issues) < 5) {
+			return 0;
+		}
 		
+		foreach ($issues as $issueAlike) {
+			$file = $issueAlike->getProject();
+			
+			echo $issueAlike->getSeverity();
+			
+			$tdAlike = $issueAlike->getTechnicalDebt();
+			if ($tdAlike == null) echo 'aqui';			
+			//$tdMeasures = $tdAlike->getMeasures();
+			
+		}
+		
+		return 0;
 		if ($issue->getSeverity() == 'CRITICAL') {
 		
 			$metrics = array();

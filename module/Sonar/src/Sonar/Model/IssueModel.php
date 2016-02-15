@@ -41,8 +41,6 @@ class IssueModel {
 		
 		$query = $qb->getQuery();
 		
-		
-		
 		return $query->iterate();
 	}
 	

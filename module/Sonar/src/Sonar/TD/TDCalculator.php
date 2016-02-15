@@ -51,13 +51,14 @@ class TDCalculator {
 		
 		$technicalDebtModel->save($technicalDebt);
 		
+		
+		//calculate using regression
+		//$technicalDebtRegression = new TechnicalDebtRegression();
+		//$technicalDebtRegression->calc($technicalDebt);
+		
 		$this->sm->clear();
 		
 		return $technicalDebt;
-		
-		//calculate using regression
-		$technicalDebtRegression = new TechnicalDebtRegression();
-		$technicalDebtRegression->calc($technicalDebt);
 		
 		$technicalDebt->setRegressionTD(0);	
 		if (!$technicalDebt->getRealTD()) {
@@ -67,6 +68,10 @@ class TDCalculator {
 		
 		
 		return $technicalDebt;
+	}
+	
+	public function calcRegression(Issue $issue) {
+		$technicalDebt = $technicalDebtModel->get($issue->getTechnicalDebt()->getID());
 	}
 	
 	private function isSameMeasure($measure1, $measure2) {
