@@ -29,6 +29,14 @@
   		<?=$user->getName()?> <br />
   	<?php endforeach;?>
   	
+  	<b>Rules:</b><br />
+  	<div style="height: 200px; overflow: auto;">	
+  	<?php foreach ($rules as $rule):?>
+  		<input type="checkbox" name="rules[]" value="<?=$rule->getId()?>" <?php if (in_array($rule->getId(), $filters['rules']))echo 'checked="checked"';?> /> 
+  		<?=strip_tags($rule->getName())?> <br />
+  	<?php endforeach;?>
+  	</div>
+  	
   	<br />
   	<input type="button" id="btnSubmit" value="Filter" />
   	
@@ -63,6 +71,21 @@
 
 <?php echo $this->partial("sonar/sonar/moreInfoModal.phtml", array('issue' => $issue));?>
 </div>
+
+<?php if ($issue->getLine()):?>
+	<?php //echo $file->getSnapshot()->getSource()->printData($issue->getLine(), 10)?>
+	<div id="code-<?=$issue->getId()?>"></div>
+	<input type="button" id="btnCode-<?=$issue->getId()?>" value="Mostrar Código"> <br />
+<script type="text/javascript">
+$( "#btnCode-<?=$issue->getId()?>" ).click(function() {
+$.ajax({url: "/sonar/showCode?id=<?=$issue->getId()?>", success: function(result){
+    $("#code-<?=$issue->getId()?>").html(result);
+    $("#btnCode-<?=$issue->getId()?>").hide();
+}});
+});
+</script>
+<?php endif;?>
+<br />
 
 <?php endforeach;?>
 <!-- List Issues -->  	

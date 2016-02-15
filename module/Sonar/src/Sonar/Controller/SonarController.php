@@ -20,6 +20,7 @@ use DoctrineORMModule\Proxy\__CG__\Sonar\Entity\Rule;
 use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationService;
 use Sonar\Model\TechnicalDebtRegression;
+use Sonar\Model\RuleModel;
 
 class SonarController extends AbstractActionController {
 	
@@ -150,6 +151,7 @@ class SonarController extends AbstractActionController {
     	$projectModel = new ProjectModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$issueModel = new IssueModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	$userModel = new UserModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+    	$ruleModel = new RuleModel($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
     	    	
     	$projectId = isset($_GET['project'])?$_GET['project']:0;
     	$project = $projectModel->get($projectId);
@@ -160,8 +162,10 @@ class SonarController extends AbstractActionController {
     	$severities = isset($_GET['severity'])?$_GET['severity']:array();
     	$resolutions = isset($_GET['resolution'])?$_GET['resolution']:array();
     	$usersFilter = isset($_GET['users'])?$_GET['users']:array();
+    	$rulessFilter = isset($_GET['rules'])?$_GET['rules']:array();
     	
-    	$filters = array('severities' => $severities, 'resolutions' => $resolutions, 'users' => $usersFilter);
+    	$filters = array('severities' => $severities, 'resolutions' => $resolutions, 
+    					 'users' => $usersFilter, 'rules' => $rulessFilter);
     	
     	$page = isset($_GET['page'])?$_GET['page']:1;
     	
@@ -171,8 +175,10 @@ class SonarController extends AbstractActionController {
     	$npages = $result['npages'];    	
     	
     	$users = $userModel->findByProject($project);
+    	$rules = $ruleModel->findByProject($project, $filters);
     	
-    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'filters' => $filters, 'page' => $page, 'npages' => $npages);    	
+    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'rules' => $rules,
+    			 	 'filters' => $filters, 'page' => $page, 'npages' => $npages);    	
     }
     
     public function showCodeAction() {

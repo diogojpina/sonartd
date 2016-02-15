@@ -91,6 +91,19 @@ class IssueModel {
 				$i++;
 			}
 			$where .= ')';
+		}	
+
+		if ($filters['rules']) {
+			$where .= ' and (';
+			$i = 1;
+			foreach ($filters['rules'] as $rule) {
+				$where .= " r.id = $rule ";
+				if ($i < count($filters['rules'])) {
+					$where .= ' or ';
+				}
+				$i++;
+			}
+			$where .= ')';
 		}		
 		
 		$first = ($page - 1) * $limit;
@@ -99,6 +112,7 @@ class IssueModel {
 		$qb	->select('i')
    			->from('Sonar\Entity\Issue', 'i')
    			->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
+   			->innerJoin('i.rule', 'r')
    			->where('p.uuid = ?1 ' . $where	)
    			->orderBy('i.id', 'ASC')
    			->setFirstResult($first)

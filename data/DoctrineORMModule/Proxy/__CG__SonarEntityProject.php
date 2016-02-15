@@ -64,10 +64,10 @@ class Project extends \Sonar\Entity\Project implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', 'uuid', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'groupRoles', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'userRoles');
+            return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', 'uuid', 'projectUuid', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'groupRoles', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'userRoles');
         }
 
-        return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', 'uuid', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'groupRoles', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'userRoles');
+        return array('__isInitialized__', 'id', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'root', 'name', 'longName', 'kee', 'scope', 'qualifier', 'enabled', 'uuid', 'projectUuid', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'issues', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'snapshots', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'groupRoles', '' . "\0" . 'Sonar\\Entity\\Project' . "\0" . 'userRoles');
     }
 
     /**

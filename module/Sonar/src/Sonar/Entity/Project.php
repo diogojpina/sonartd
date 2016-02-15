@@ -40,6 +40,9 @@ class Project {
     /** @ORM\Column(type="string") */
     protected $uuid;
     
+    /** @ORM\Column(type="string", name="project_uuid") */
+    protected $projectUuid;
+    
     /**
      * @ORM\OneToMany(targetEntity="Sonar\Entity\Issue", mappedBy="project")
      **/
