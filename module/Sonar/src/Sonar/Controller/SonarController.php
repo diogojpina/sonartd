@@ -162,10 +162,13 @@ class SonarController extends AbstractActionController {
     	$severities = isset($_GET['severity'])?$_GET['severity']:array();
     	$resolutions = isset($_GET['resolution'])?$_GET['resolution']:array();
     	$usersFilter = isset($_GET['users'])?$_GET['users']:array();
-    	$rulessFilter = isset($_GET['rules'])?$_GET['rules']:array();
+    	$rulesFilter = isset($_GET['rules'])?$_GET['rules']:array();
+    	$folderFilter = isset($_GET['folder'])?$_GET['folder']:array();
+    	$filesFilter = isset($_GET['files'])?$_GET['files']:array();
     	
     	$filters = array('severities' => $severities, 'resolutions' => $resolutions, 
-    					 'users' => $usersFilter, 'rules' => $rulessFilter);
+    					 'users' => $usersFilter, 'rules' => $rulesFilter, 
+    					 'folder' => $folderFilter, 'files' => $filesFilter);
     	
     	$page = isset($_GET['page'])?$_GET['page']:1;
     	
@@ -176,8 +179,19 @@ class SonarController extends AbstractActionController {
     	
     	$users = $userModel->findByProject($project);
     	$rules = $ruleModel->findByProject($project, $filters);
+    	$folders = $projectModel->getFolders($project);    	
+    	if ($folderFilter) {
+    		$folder = $projectModel->get($folderFilter);
+    		$files = $projectModel->getSourceFilesByFolder($folder);
+    	}
+    	else {
+    		$files = $projectModel->getSourceFiles($project);
+    	}
     	
-    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'rules' => $rules,
+    	
+    	
+    	return array('project' => $project, 'issues' => $issues, 'users' => $users, 'rules' => $rules, 
+    				 'folders' => $folders, 'files' => $files, 
     			 	 'filters' => $filters, 'page' => $page, 'npages' => $npages);    	
     }
     

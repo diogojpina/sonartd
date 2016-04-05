@@ -1,6 +1,6 @@
 <h1><?php echo $project->getName()?></h1>
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-4">
   	<h3>Filters</h3>
   	<form method="get" id="form">
   	<input type="hidden" name="project" value="<?=$project->getId()?>">
@@ -37,13 +37,30 @@
   	<?php endforeach;?>
   	</div>
   	
+  	<b>Folder:</b><br />
+  	<div style="height: 200px; overflow: auto;">	
+  	<input type="radio" name="folder" value="" /> Todos <br />
+  	<?php foreach ($folders as $folder):?>
+  		<input type="radio" name="folder" value="<?=$folder->getId()?>" <?php if ($folder->getId() == $filters['folder'])echo 'checked="checked"';?> /> 
+  		<?=strip_tags($folder->getName())?> <br />
+  	<?php endforeach;?>
+  	</div>    	
+  	
+  	<b>Files:</b><br />
+  	<div style="height: 200px; overflow: auto;">	
+  	<?php foreach ($files as $file):?>
+  		<input type="checkbox" name="files[]" value="<?=$file->getId()?>" <?php if (in_array($file->getId(), $filters['files']))echo 'checked="checked"';?> /> 
+  		<?=strip_tags($file->getName())?> <br />
+  	<?php endforeach;?>
+  	</div>  	
+  	
   	<br />
   	<input type="button" id="btnSubmit" value="Filter" />
   	
   	<input type="hidden" id="page" name="page" value="<?=$page?>">
   	</form>
   </div>
-  <div class="col-md-9">
+  <div class="col-md-8">
   	<h3>Issues</h3>
   	
 <!-- List Issues -->

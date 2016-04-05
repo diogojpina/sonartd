@@ -106,15 +106,50 @@ class IssueModel {
 			$where .= ')';
 		}		
 		
+		if ($filters['folder']) {
+			$projectModel = new ProjectModel($this->sm);
+			$folder = $projectModel->get($filters['folder']);
+			$files = $projectModel->getSourceFilesByFolder($folder);
+			$newFiles = array();
+			if (count($filters['files']) == 0) {
+				foreach ($files as $file) {
+					$newFiles[] = $file->getId();
+				}
+			}
+			else {
+				foreach ($files as $file) {
+					if (in_array($file->getId(), $filters['files'])) {
+						$newFiles[] = $file->getId();
+					}
+				}
+			}	
+			$filters['files'] = $newFiles;		
+		}
+		
+		
+		if ($filters['files']) {
+			$where .= ' and (';
+			$i = 1;
+			foreach ($filters['files'] as $file) {
+				$where .= " f.id = $file ";
+				if ($i < count($filters['files'])) {
+					$where .= ' or ';
+				}
+				$i++;
+			}
+			$where .= ')';
+		}
+		
 		$first = ($page - 1) * $limit;
 						
 		$qb = $this->sm->createQueryBuilder();
 		$qb	->select('i')
    			->from('Sonar\Entity\Issue', 'i')
    			->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
+   			->innerJoin('Sonar\Entity\Project', 'f', 'WITH', 'f.id = i.component_id')
    			->innerJoin('i.rule', 'r')
    			->where('p.uuid = ?1 ' . $where	)
-   			->orderBy('i.id', 'ASC')
+   			->orderBy('f.id', 'ASC')
    			->setFirstResult($first)
    			->setMaxResults($limit)
 			->setParameter(1, $project->getUUId());

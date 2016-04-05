@@ -69,6 +69,10 @@ class ProjectModel {
 		return $projects;		
 	}
 	
+	public function getFolders(Project $project) {
+		return $this->repository->findBy(array('root' => $project, 'scope' => 'DIR', 'qualifier' => 'DIR', 'enabled' => 1));
+	}
+	
 	public function getFolderWithIssues(Project $project) {
 		
 	}
