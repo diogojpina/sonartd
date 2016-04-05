@@ -36,7 +36,7 @@ class TechnicalDebtModel {
 		->innerJoin('td.issue', 'i')
 		->innerJoin('i.rule', 'r')		
 		->innerJoin('Sonar\Entity\Project', 'p', 'WITH', 'p.uuid = i.project_uuid')
-		->where('p = ?1 and td.realTD is not null')
+		->where('p = ?1 and td.realTD is not null and td.realTD > 0')
 		->orderBy('r.id', 'ASC')
 		->setParameter(1, $project);
 		

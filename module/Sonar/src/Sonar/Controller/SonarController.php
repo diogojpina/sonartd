@@ -239,11 +239,14 @@ class SonarController extends AbstractActionController {
     		$technicalDebt = $tdCalculator->calc($issue);
 		}
 		
-		/*
+		
+		
+    	/*
 		$technicalDebts = $technicalDebtModel->findPayed($project);
 		$technicalDebtRegression = new TechnicalDebtRegression();
 		$technicalDebtRegression->calc($technicalDebts);
 		*/
+		
 		
     	return false;
     	

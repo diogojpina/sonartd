@@ -15,31 +15,64 @@ class TechnicalDebtRegression {
 	public function calc($technicalDebts) {
 		$debts = array();
 		
-		foreach ($technicalDebts as $technicalDebt) {
-			$debts[] = $technicalDebt;
-			/*
-			if ($technicalDebt->getIssue()->getRule()->getId() != $technicalOld->getIssue()->getRule()->getId()) {
-							
-			} 
-			*/
-			//precisa agrupar por rules, quando a rule mudar chamar o método de calculo
-			
-			$tdOld = $technicalDebt;
-		}
-		$this->calcRegression($debts);
 		
+		$i = 0;
+		foreach ($technicalDebts as $technicalDebt) {
+			$debts[] = $technicalDebt;			
+			if ($i > 0) {
+				$rule = $technicalDebt->getIssue()->getRule();
+				$ruleOld = $technicalDebtOld->getIssue()->getRule();
+				//echo $rule->getId() . " - " . $rule->getName() . "\n";
+				//echo $ruleOld->getId() . " - " . $ruleOld->getName() . "\n";
+				if ($rule->getId() != $ruleOld->getId()) {
+					$this->calcRegression($debts);
+					$debts = array();
+				} 
+			}
+			
+			$technicalDebtOld = $technicalDebt;
+			$i++;
+		}
+		
+		if (count($debts) > 0) {
+			$this->calcRegression($debts);
+		}
+				
 	}
 	
 	public function calcRegression($technicalDebts) {
-		//se tiver poucas issues parar aqui, pois a regressão ficará ruim
 		if (count($technicalDebts) < 5) {
-			echo "não tem o suficiente.\n";
-			return 0;
+			echo "Não tem pagamentos suficientes para calcular a regressão.\n";
+			return false;
 		}
 		
+		echo count($technicalDebts) . "\n";
+		
+		
+		$metrics = array();
+		$params = array();
 		foreach ($technicalDebts as $technicalDebt) {
+			//FIXME:arumar para pegar a medida de quando a dívida técnica foi paga
+			$snapshot = $technicalDebt->getIssue()->getProject()->getSnapshot();
+			$measures = $snapshot->getMeasures();
 			
-		}
+			foreach ($this->selectedMetrics as $idx => $metric) {
+				$metrics[$idx][$technicalDebt->getId()] = 0;
+			}
+			
+			foreach ($measures as $measure) {
+				$measureName = $measure->getMetric()->getName();				
+				$idx = array_search($measureName, $this->selectedMetrics);
+				if ($idx !== false) {
+					//echo "$measureName - ". (float)$measure->getValue() ."\n";
+					$metrics[$idx][$technicalDebt->getId()] =  $measure->getValue();
+				}
+			}	
+			
+			$metrics[count($this->selectedMetrics)][$technicalDebt->getId()] = $technicalDebt->getRealTD();	
+		}		
+		$this->generateRScipt($metrics, array());
+		
 	}
 		
 	public function calc2(TechnicalDebt $technicalDebt) {
@@ -103,16 +136,9 @@ class TechnicalDebtRegression {
 						else {
 							$params[$idx] =  $measure->getValue();
 						}
-						//echo $measure->getMetric()->getName() . ' -> ' . $measure->getValue();
-						//echo '<br />';
 					}
-
-				}
-				//echo '<hr />';
-				
+				}				
 			}
-			echo '<hr />';
-			
 			
 			
 			$this->generateRScipt($metrics, $params);
@@ -129,23 +155,20 @@ class TechnicalDebtRegression {
 		touch($file);
 		$fp = fopen($file, 'w');
 
-		
-		
 		$i = 1;
 		$n = count($this->selectedMetrics);
-		foreach ($data as $arr) {
+		foreach ($data as $measures) {
 			fwrite($fp, "x$i = c(");
-			for($j=0; $j < $n; $j++) {
-				if (array_key_exists($j, $arr)) {
-					fwrite($fp, $arr[$j]);
-				}
-				else {
-					fwrite($fp, '0');
-				}
-				
-				if ($j+1 < $n)
+			
+			$j = 0;
+			$m = count($measures);
+			foreach ($measures as $measure) {
+				fwrite($fp, (float) $measure);
+				if (++$j < $m)
 					fwrite($fp, ', ');
 			}
+				
+			
 			fwrite($fp, ")\n");
 			$i++;
 		}
@@ -159,8 +182,8 @@ class TechnicalDebtRegression {
 		}
 		fwrite($fp, ")\n\n");
 		
-		$degree = 2;
-		$numVars = count($data) - 1;
+		$degree = 5;
+		$numVars = count($data);
 		$i = 1;
 		
 		fwrite($fp, "degree = $degree\n");
