@@ -3,6 +3,7 @@ return array (
 		'controllers' => array (
 				'invokables' => array (
 						'Sonar\Controller\Sonar' => 'Sonar\Controller\SonarController',
+						'Sonar\Controller\Compare' => 'Sonar\Controller\CompareController',
 						'Sonar\Controller\Auth' => 'Sonar\Controller\AuthController'
 				) 
 		),
@@ -34,6 +35,20 @@ return array (
 										),
 										'defaults' => array (
 												'controller' => 'Sonar\Controller\Auth',
+												'action' => 'index'
+										)
+								)
+						),
+						'compare' => array (
+								'type' => 'segment',
+								'options' => array (
+										'route' => '/compare[/][:action][/:id]',
+										'constraints' => array (
+												'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+												'id' => '[0-9]+'
+										),
+										'defaults' => array (
+												'controller' => 'Sonar\Controller\Compare',
 												'action' => 'index'
 										)
 								)
