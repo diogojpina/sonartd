@@ -23,10 +23,14 @@ class ProjectModel {
 		$id = (int) $id;
 		return $this->sm->find('Sonar\Entity\Project', $id);
 	}
-	
+		
 	public function getByUUID($uuid) {
 		return $projects = $this->repository->findOneBy(array('uuid' => $uuid));
-	}	
+	}
+
+	public function getByKee($kee) {
+		return $projects = $this->repository->findOneBy(array('kee' => $kee));
+	}
 	
 	public function getRoots() {
 		return $this->repository->findBy(array('scope' => 'PRJ', 'qualifier' => 'TRK', 'enabled' => 1));
